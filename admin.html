@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mr.Huy Admin - Hệ Thống Quản Trị Cửa Hàng</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Admin Stylesheet -->
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+    <!-- ========================================================
+         MÀN HÌNH ĐĂNG NHẬP BẮT BUỘC BAN ĐẦU CHO ADMIN
+         (Mới vào bắt buộc đăng nhập để vào hệ thống quản trị)
+         ======================================================== -->
+    <div id="adminLoginScreen" style="position: fixed; inset: 0; background: #0f172a; z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 20px;">
+        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 12px; width: 100%; max-width: 420px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); overflow: hidden;">
+            <div style="padding: 30px 24px 20px 24px; text-align: center; border-bottom: 1px solid #334155;">
+                <img src="img/logo.png" alt="Mr.Huy Admin Logo" style="width: 64px; height: 64px; border-radius: 12px; margin: 0 auto 12px auto; display: block; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                <h2 style="color: #fff; font-size: 22px; font-weight: 800; margin: 0;">Mr.Huy ADMIN</h2>
+                <p style="font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.2px; margin-top: 4px;">
+                    HỆ THỐNG QUẢN TRỊ CỬA HÀNG
+                </p>
+                <div style="font-size: 13px; color: #cbd5e1; margin-top: 10px;">
+                    Đăng nhập tài khoản Quản trị viên
+                </div>
+            </div>
+            <div style="padding: 24px;">
+                <form onsubmit="handleAdminLoginSubmit(event)">
+                    <div style="margin-bottom: 16px;">
+                        <label style="display: block; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px;"><i class="fa-regular fa-user"></i> Tài khoản Admin:</label>
+                        <input type="text" id="adminInputUser" class="form-input" style="width: 100%; background: #0f172a; border-color: #475569; color: #fff; padding: 10px 12px;" placeholder="Tên đăng nhập admin..." value="admin">
+                    </div>
+                    <div style="margin-bottom: 16px;">
+                        <label style="display: block; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px;"><i class="fa-solid fa-lock"></i> Mật khẩu:</label>
+                        <input type="password" id="adminInputPass" class="form-input" style="width: 100%; background: #0f172a; border-color: #475569; color: #fff; padding: 10px 12px;" placeholder="Mật khẩu admin..." value="admin123">
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 12px; color: #94a3b8;">
+                        <label style="cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                            <input type="checkbox" checked> Ghi nhớ đăng nhập
+                        </label>
+                        <a href="index.html" style="color: #38bdf8; text-decoration: none;"><i class="fa-solid fa-store"></i> Đến cửa hàng</a>
+                    </div>
+                    <button type="submit" class="btn-admin btn-admin-primary" style="width: 100%; justify-content: center; padding: 12px; font-size: 14px; font-weight: 700;">
+                        <i class="fa-solid fa-arrow-right-to-bracket"></i> ĐĂNG NHẬP VÀO HỆ THỐNG
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================
+         GIAO DIỆN BẢNG ĐIỀU KHIỂN CHÍNH (ADMIN DASHBOARD)
+         URL RIÊNG BIỆT: admin.html
+         KHÔNG CƠ SỞ DỮ LIỆU - PURE GIAO DIỆN MOCKUP
+         ======================================================== -->
+    <div class="admin-layout" id="adminMainLayout" style="display: none;">
+        <!-- SIDEBAR -->
+        <aside class="admin-sidebar">
+            <div class="admin-sidebar-brand" style="display: flex; align-items: center; gap: 10px;">
+                <img src="img/logo.png" alt="Mr.Huy Logo" style="width: 36px; height: 36px; border-radius: 8px; object-fit: cover;">
+                <h2>Mr.Huy Admin</h2>
+            </div>
+            <nav class="admin-sidebar-nav">
+                <div class="nav-group-title">Bảng điều khiển</div>
+                <div class="admin-nav-item active" id="navDashboard" onclick="switchAdminTab('dashboard')">
+                    <i class="fa-solid fa-chart-pie"></i> Tổng quan
+                </div>
+
+                <div class="nav-group-title">Giao diện Nghiệp vụ Quản trị</div>
+                <div class="admin-nav-item" id="navProducts" onclick="switchAdminTab('products')">
+                    <i class="fa-solid fa-box-archive"></i> Quản lý Sản phẩm
+                </div>
+                <div class="admin-nav-item" id="navUsers" onclick="switchAdminTab('users')">
+                    <i class="fa-solid fa-users"></i> Quản lý Người dùng
+                </div>
+                <div class="admin-nav-item" id="navOrders" onclick="switchAdminTab('orders')">
+                    <i class="fa-solid fa-file-invoice-dollar"></i> Quản lý Đơn hàng
+                </div>
+                <div class="admin-nav-item" id="navStats" onclick="switchAdminTab('stats')">
+                    <i class="fa-solid fa-chart-column"></i> Thống kê Top Khách hàng
+                </div>
+            </nav>
+
+            <div class="admin-sidebar-footer">
+                <a href="index.html" target="_blank" class="admin-nav-item" style="padding: 8px 0; color: #38bdf8;">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Xem Web Khách Hàng
+                </a>
+                <div class="admin-nav-item" style="padding: 8px 0; color: #ef4444;" onclick="handleAdminLogoutMock()">
+                    <i class="fa-solid fa-power-off"></i> Đăng xuất Admin
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN VIEW -->
+        <main class="admin-main">
+            <!-- TOPBAR: 1. Chức năng đăng nhập & đăng xuất (0.5đ) -->
+            <header class="admin-topbar">
+                <div class="topbar-page-title" id="pageTitleText">Tổng Quan Hệ Thống Mr.Huy</div>
+                <div class="topbar-right-user">
+                    <div style="font-size: 13px;" id="adminLoggedNameBox">
+                        Quản trị viên: <strong>Quản Trị Viên SGU (admin)</strong>
+                    </div>
+                    <button class="btn-admin btn-admin-danger" onclick="handleAdminLogoutMock()">
+                        <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                    </button>
+                </div>
+            </header>
+
+            <!-- CONTENT BODY -->
+            <div class="admin-content-body">
+
+                <!-- TAB 1: TỔNG QUAN (DASHBOARD) -->
+                <div id="tabDashboard" class="admin-tab-content">
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-info">
+                                <h4>Tổng Doanh Thu</h4>
+                                <div class="metric-value" id="dashTotalRevenue" style="color: #16a34a;">3.519.000₫</div>
+                            </div>
+                            <div class="metric-icon-box metric-icon-green"><i class="fa-solid fa-coins"></i></div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-info">
+                                <h4>Tổng Đơn Hàng</h4>
+                                <div class="metric-value" id="dashTotalOrders">5 đơn</div>
+                            </div>
+                            <div class="metric-icon-box metric-icon-blue"><i class="fa-solid fa-receipt"></i></div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-info">
+                                <h4>Sản Phẩm Đang Bán</h4>
+                                <div class="metric-value" id="dashProductCount">40 sản phẩm</div>
+                            </div>
+                            <div class="metric-icon-box metric-icon-orange"><i class="fa-solid fa-mug-hot"></i></div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-info">
+                                <h4>Khách Hàng Đăng Ký</h4>
+                                <div class="metric-value" id="dashUserCount">6 khách</div>
+                            </div>
+                            <div class="metric-icon-box metric-icon-purple"><i class="fa-solid fa-users"></i></div>
+                        </div>
+                    </div>
+
+                    <div class="admin-panel">
+                        <div class="panel-header">
+                            <div class="panel-title"><i class="fa-solid fa-clock" style="color: #eab308;"></i> Đơn Hàng Cần Xác Nhận Gần Đây</div>
+                            <button class="btn-admin btn-admin-primary" onclick="switchAdminTab('orders')">Xem tất cả đơn hàng</button>
+                        </div>
+                        <div class="panel-body" style="padding: 0;">
+                            <div class="table-responsive">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Mã Đơn</th>
+                                            <th>Khách Hàng</th>
+                                            <th>Địa Chỉ Giao Hàng</th>
+                                            <th>Ngày Đặt</th>
+                                            <th>Tổng Tiền</th>
+                                            <th>Trạng Thái</th>
+                                            <th>Chi Tiết</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="dashboardRecentOrdersTbody">
+                                        <tr>
+                                            <td><strong>#DH1005</strong></td>
+                                            <td>Vũ Minh Tuấn</td>
+                                            <td>99 Láng Hạ, Phường Thành Công, Quận Đống Đa, Hà Nội</td>
+                                            <td>2025-03-28</td>
+                                            <td style="font-weight: 700; color: #dc2626;">380.000₫</td>
+                                            <td><span class="badge-status" style="background:#fef3c7; color:#92400e;">Chưa xác nhận</span></td>
+                                            <td><button class="btn-admin btn-admin-outline" style="padding: 4px 8px; font-size: 11px;" onclick="viewOrderDetailMock('DH1005')"><i class="fa-solid fa-eye"></i> Xem</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>#DH1004</strong></td>
+                                            <td>Nguyễn Văn An</td>
+                                            <td>123 Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP.HCM</td>
+                                            <td>2025-03-15</td>
+                                            <td style="font-weight: 700; color: #dc2626;">1.250.000₫</td>
+                                            <td><span class="badge-status" style="background:#e0f2fe; color:#0369a1;">Đã xác nhận</span></td>
+                                            <td><button class="btn-admin btn-admin-outline" style="padding: 4px 8px; font-size: 11px;" onclick="viewOrderDetailMock('DH1004')"><i class="fa-solid fa-eye"></i> Xem</button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: QUẢN LÝ SẢN PHẨM (0.5đ Thêm có preview + 0.5đ Sửa đúng thông tin + 0.75đ Xóa/Ẩn) -->
+                <div id="tabProducts" class="admin-tab-content" style="display: none;">
+                    <div class="admin-panel">
+                        <div class="panel-header">
+                            <div class="panel-title"><i class="fa-solid fa-box"></i> Quản Lý Sản Phẩm Mr.Huy</div>
+                            <!-- 2. Thêm sản phẩm: đúng phân loại - có upload hình (0.5đ) -->
+                            <button class="btn-admin btn-admin-primary" onclick="openAddProductModal()">
+                                <i class="fa-solid fa-plus"></i> Thêm Sản Phẩm Mới (Có Preview Ảnh)
+                            </button>
+                        </div>
+                        <!-- BỘ LỌC VÀ TÌM KIẾM SẢN PHẨM REAL-TIME CHO ADMIN (GIỐNG NGƯỜI DÙNG) -->
+                        <div style="background: #f8fafc; padding: 12px 20px; border-bottom: 1px solid var(--admin-border); display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between;">
+                            <div style="display: flex; gap: 10px; align-items: center; flex: 1; max-width: 550px;">
+                                <div style="position: relative; flex: 1;">
+                                    <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
+                                    <input type="text" id="adminProductSearchInput" class="form-control" placeholder="Tìm kiếm theo tên sản phẩm, mã SP..." style="padding-left: 36px; height: 36px;" oninput="handleAdminProductSearch()">
+                                </div>
+                                <select id="adminProductCategoryFilter" class="form-control" style="width: 175px; height: 36px;" onchange="handleAdminProductSearch()">
+                                    <option value="">Tất cả phân loại</option>
+                                    <option value="office">Ly văn phòng</option>
+                                    <option value="sport">Bình thể thao</option>
+                                    <option value="smart">Bình thông minh</option>
+                                    <option value="kids">Bình trẻ em</option>
+                                    <option value="gift">Hộp quà tặng</option>
+                                </select>
+                                <button type="button" class="btn-admin btn-admin-outline" style="height: 36px;" onclick="clearAdminProductSearch()">
+                                    <i class="fa-solid fa-rotate-left"></i> Đặt lại
+                                </button>
+                            </div>
+                            <div id="adminProductCountInfo" style="font-size: 13px; color: var(--admin-muted); font-weight: 500;">
+                                Hiển thị: <strong id="adminProductCountDisplay" style="color: var(--admin-primary);">40</strong> sản phẩm
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Mã SP</th>
+                                            <th>Hình Ảnh</th>
+                                            <th>Tên Sản Phẩm</th>
+                                            <th>Phân Loại</th>
+                                            <th>Dung Tích</th>
+                                            <th>Giá Bán</th>
+                                            <th>Đã Bán</th>
+                                            <th>Trạng Thái</th>
+                                            <th>Hành Động</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="adminProductsTbody">
+                                        <!-- Rendered dynamically by renderAdminProducts() -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: QUẢN LÝ USER (0.5đ Thêm, Sửa, Khóa/Mở) -->
+                <div id="tabUsers" class="admin-tab-content" style="display: none;">
+                    <div class="admin-panel">
+                        <div class="panel-header">
+                            <div class="panel-title"><i class="fa-solid fa-users-gear"></i> Giao Diện Quản Lý Tài Khoản Người Dùng</div>
+                            <button class="btn-admin btn-admin-primary" onclick="openAddUserModal()">
+                                <i class="fa-solid fa-user-plus"></i> Thêm Tài Khoản Mới
+                            </button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Mã</th>
+                                            <th>Tên Đăng Nhập</th>
+                                            <th>Họ Và Tên</th>
+                                            <th>Email</th>
+                                            <th>SĐT</th>
+                                            <th>Địa Chỉ</th>
+                                            <th>Vai Trò</th>
+                                            <th>Trạng Thái</th>
+                                            <th>Hành Động (Sửa, Khóa/Mở)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="adminUsersTbody">
+                                        <!-- Rendered dynamically by renderAdminUsers() -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 4: QUẢN LÝ ĐƠN HÀNG -->
+                <div id="tabOrders" class="admin-tab-content" style="display: none;">
+                    <div class="admin-panel">
+                        <div class="panel-header">
+                            <div class="panel-title"><i class="fa-solid fa-truck-fast"></i> Quản Lý Đơn Hàng</div>
+                        </div>
+                        <div class="panel-body">
+                            <!-- Bộ lọc đơn hàng đa năng: Tình trạng / Thời gian / Địa điểm -->
+                            <div class="filter-action-bar" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; align-items: flex-end;">
+                                <div>
+                                    <label style="display: block; font-weight: 600; margin-bottom: 4px;">Tình trạng đơn hàng:</label>
+                                    <select id="orderFilterStatus" class="form-select" style="width: 100%;" onchange="filterAdminOrders()">
+                                        <option value="">-- Tất cả trạng thái --</option>
+                                        <option value="Chưa xác nhận">Chưa xác nhận</option>
+                                        <option value="Đã xác nhận">Đã xác nhận</option>
+                                        <option value="Đã giao thành công">Đã giao (thành công)</option>
+                                        <option value="Đã hủy đơn">Đã giao (hủy đơn)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="display: block; font-weight: 600; margin-bottom: 4px;">Từ ngày đặt hàng:</label>
+                                    <input type="date" id="orderFilterFromDate" class="form-input" style="width: 100%;" value="2025-01-01" onchange="filterAdminOrders()">
+                                </div>
+                                <div>
+                                    <label style="display: block; font-weight: 600; margin-bottom: 4px;">Đến ngày đặt hàng:</label>
+                                    <input type="date" id="orderFilterToDate" class="form-input" style="width: 100%;" value="2025-12-31" onchange="filterAdminOrders()">
+                                </div>
+                                <div>
+                                    <label style="display: block; font-weight: 600; margin-bottom: 4px;">Địa điểm: Tỉnh / TP:</label>
+                                    <select id="orderFilterCity" class="form-select" style="width: 100%;" onchange="filterAdminOrders()">
+                                        <option value="">-- Tất cả thành phố --</option>
+                                        <option value="TP. Hồ Chí Minh">TP. Hồ Chí Minh</option>
+                                        <option value="Hà Nội">Hà Nội</option>
+                                        <option value="Đà Nẵng">Đà Nẵng</option>
+                                    </select>
+                                </div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button class="btn-admin btn-admin-primary" style="flex: 1;" onclick="filterAdminOrders()">
+                                        <i class="fa-solid fa-filter"></i> Lọc đơn
+                                    </button>
+                                    <button class="btn-admin btn-admin-outline" onclick="resetOrderFilters()">
+                                        <i class="fa-solid fa-rotate-left"></i> Đặt lại
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Mã Đơn</th>
+                                            <th>Khách Hàng</th>
+                                            <th>Địa Chỉ Giao (Quận/TP)</th>
+                                            <th>Ngày Đặt</th>
+                                            <th>Tổng Tiền</th>
+                                            <th>Trạng Thái</th>
+                                            <th>Cập Nhật Tình Trạng</th>
+                                            <th>Chi Tiết</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="adminOrdersTbody">
+                                        <!-- Rendered dynamically by filterAdminOrders() -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 5: BÁO CÁO THỐNG KÊ (TOP 5 KHÁCH HÀNG MỨC MUA CAO NHẤT) -->
+                <div id="tabStats" class="admin-tab-content" style="display: none;">
+                    <div class="admin-panel">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <i class="fa-solid fa-crown" style="color: #f59e0b;"></i> Thống Kê 5 Khách Hàng Có Mức Mua Hàng Cao Nhất
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <!-- Bộ nhập khoảng thời gian thống kê -->
+                            <div class="filter-action-bar" style="display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap;">
+                                <div>
+                                    <label style="display: block; font-weight: 600; margin-bottom: 4px;">Ngày bắt đầu thống kê:</label>
+                                    <input type="date" id="statsStartDate" class="form-input" value="2025-01-01">
+                                </div>
+                                <div>
+                                    <label style="display: block; font-weight: 600; margin-bottom: 4px;">Ngày kết thúc thống kê:</label>
+                                    <input type="date" id="statsEndDate" class="form-input" value="2025-12-31">
+                                </div>
+                                <button class="btn-admin btn-admin-primary" onclick="runCustomerStatistics()">
+                                    <i class="fa-solid fa-calculator"></i> TIẾN HÀNH THỐNG KÊ
+                                </button>
+                                <button class="btn-admin btn-admin-outline" onclick="resetCustomerStatistics()">
+                                    <i class="fa-solid fa-rotate-left"></i> Đặt lại
+                                </button>
+                            </div>
+
+                            <div style="margin-bottom: 14px; font-size: 13px; font-weight: 600; color: #1e3a8a;" id="statsPeriodSummary">
+                                <i class="fa-solid fa-chart-line"></i> Bảng dữ liệu được sắp xếp giảm dần theo tổng tiền mua trong kỳ:
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Hạng</th>
+                                            <th>Khách Hàng</th>
+                                            <th>Thông Tin Liên Hệ</th>
+                                            <th>Số Lượng Đơn</th>
+                                            <th>Thời Gian Đặt Hàng</th>
+                                            <th>Danh Sách Từng Đơn Hàng (Link xem chi tiết)</th>
+                                            <th>Tổng Tiền Mua (₫)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="adminStatsTbody">
+                                        <!-- Rendered dynamically by runCustomerStatistics() -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- ========================================================
+         CÁC MODAL GIAO DIỆN PHỤC VỤ WEB-ADMIN
+         ======================================================== -->
+
+    <!-- MODAL 1: GIAO DIỆN THÊM / SỬA SẢN PHẨM (Upload hình xem trước + Đúng phân loại) -->
+    <div class="admin-modal-overlay" id="productFormModal">
+        <div class="admin-modal-card">
+            <div class="admin-modal-header">
+                <h3 id="pModalTitle" style="font-size: 16px; font-weight: 700;">Thêm Sản Phẩm Mới</h3>
+                <button onclick="closeAdminModal('productFormModal')" style="background: none; border: none; font-size: 20px; cursor: pointer;">&times;</button>
+            </div>
+            <div class="admin-modal-body">
+                <input type="hidden" id="editingProductId" value="">
+                <div style="margin-bottom: 12px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 4px;">Tên sản phẩm *:</label>
+                    <input type="text" id="pInputName" class="form-input" style="width: 100%;" value="Ly Giữ Nhiệt Cao Cấp Inox 304 Iced Americano Kèm Ống Hút Mr.Huy (600ml)">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                    <div>
+                        <!-- Đúng phân loại -->
+                        <label style="display: block; font-weight: 600; margin-bottom: 4px;">Phân loại danh mục *:</label>
+                        <select id="pSelectCat" class="form-select" style="width: 100%;">
+                            <option value="ly-giu-nhiet" selected>Ly giữ nhiệt</option>
+                            <option value="binh-the-thao">Bình thể thao</option>
+                            <option value="ly-van-phong">Ly văn phòng</option>
+                            <option value="ly-hoa-tiet">Bình nước họa tiết</option>
+                            <option value="phu-kien">Ống hút & Cọ rửa</option>
+                            <option value="hop-qua">Hộp quà tặng</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; margin-bottom: 4px;">Dung tích:</label>
+                        <select id="pSelectCapacity" class="form-select" style="width: 100%;">
+                            <option value="350ml">350ml</option>
+                            <option value="500ml">500ml</option>
+                            <option value="600ml" selected>600ml</option>
+                            <option value="750ml">750ml</option>
+                            <option value="900ml">900ml</option>
+                            <option value="1000ml">1000ml</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                    <div>
+                        <label style="display: block; font-weight: 600; margin-bottom: 4px;">Giá bán hiện tại (₫):</label>
+                        <input type="number" id="pInputPrice" class="form-input" style="width: 100%;" value="189000">
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; margin-bottom: 4px;">Lượt đã bán (Khởi tạo):</label>
+                        <input type="number" id="pInputSold" class="form-input" style="width: 100%;" value="0" readonly title="Mặc định = 0 khi thêm mới">
+                    </div>
+                </div>
+
+                <!-- Có upload hình & hiển thị hình ảnh trước khi thêm (0.5đ) -->
+                <div style="margin-bottom: 14px; border: 1px dashed #cbd5e1; padding: 12px; border-radius: 6px; background: #f8fafc;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 4px;">
+                        <i class="fa-solid fa-image"></i> Tải lên hình ảnh sản phẩm (Xem trước ngay):
+                    </label>
+                    <input type="file" accept="image/*" class="form-input" onchange="previewImageMock(event)">
+                    <div style="font-size: 11px; color: #64748b; margin-top: 4px;">* Khung hiển thị hình ảnh trước khi lưu:</div>
+                    <div class="img-preview-box" id="previewBoxWrap">
+                        <i class="fa-solid fa-mug-hot" id="previewIconFallback" style="font-size: 48px; color: #1e3a8a; display: none;"></i>
+                        <img id="previewImgTag" src="img/ly-giu-nhiet-1.png" alt="Xem trước ảnh" style="display: block; max-width: 100%; max-height: 100%; border-radius: 6px;">
+                    </div>
+                </div>
+
+                <div class="admin-modal-footer">
+                    <button type="button" class="btn-admin btn-admin-outline" onclick="closeAdminModal('productFormModal')">Hủy</button>
+                    <button type="button" class="btn-admin btn-admin-primary" onclick="handleSaveProductMock(event)">
+                        <i class="fa-solid fa-floppy-disk"></i> Lưu Sản Phẩm
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: GIAO DIỆN THÊM / SỬA USER -->
+    <div class="admin-modal-overlay" id="userFormModal">
+        <div class="admin-modal-card" style="max-width: 500px;">
+            <div class="admin-modal-header">
+                <h3 id="uModalTitle" style="font-size: 16px; font-weight: 700;">Thêm Người Dùng</h3>
+                <button onclick="closeAdminModal('userFormModal')" style="background: none; border: none; font-size: 20px; cursor: pointer;">&times;</button>
+            </div>
+            <div class="admin-modal-body">
+                <input type="hidden" id="editingUserId" value="">
+                <div style="margin-bottom: 12px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 4px;">Tên đăng nhập:</label>
+                    <input type="text" id="uInputUsername" class="form-input" style="width: 100%;" value="nguyenvana">
+                </div>
+                <div style="margin-bottom: 12px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 4px;">Họ và tên:</label>
+                    <input type="text" id="uInputFullName" class="form-input" style="width: 100%;" value="Nguyễn Văn An">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                    <div>
+                        <label style="display: block; font-weight: 600; margin-bottom: 4px;">Số điện thoại:</label>
+                        <input type="tel" id="uInputPhone" class="form-input" style="width: 100%;" value="0912345678">
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; margin-bottom: 4px;">Email:</label>
+                        <input type="email" id="uInputEmail" class="form-input" style="width: 100%;" value="nguyenvana@gmail.com">
+                    </div>
+                </div>
+                <div style="margin-bottom: 12px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 4px;">Địa chỉ:</label>
+                    <input type="text" id="uInputAddress" class="form-input" style="width: 100%;" value="123 Nguyễn Huệ, Quận 1, TP.HCM">
+                </div>
+                <div class="admin-modal-footer">
+                    <button type="button" class="btn-admin btn-admin-outline" onclick="closeAdminModal('userFormModal')">Hủy</button>
+                    <button type="button" class="btn-admin btn-admin-primary" onclick="handleSaveUserMock(event)">Lưu Người Dùng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: XEM CHI TIẾT ĐƠN HÀNG TRÊN ADMIN -->
+    <div class="admin-modal-overlay" id="orderDetailAdminModal">
+        <div class="admin-modal-card">
+            <div class="admin-modal-header">
+                <h3 id="adminOrderDetailTitle" style="font-size: 16px; font-weight: 700;">Chi Tiết Đơn Hàng #DH1001</h3>
+                <button onclick="closeAdminModal('orderDetailAdminModal')" style="background: none; border: none; font-size: 20px; cursor: pointer;">&times;</button>
+            </div>
+            <div class="admin-modal-body" id="adminOrderDetailDynamicContent">
+                <!-- Populated dynamically by viewOrderDetailMock() -->
+            </div>
+            <div class="admin-modal-footer">
+                <button class="btn-admin btn-admin-outline" onclick="closeAdminModal('orderDetailAdminModal')">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pure Frontend UI Logic Script for Admin (NO DATABASE, NO STORAGE) -->
+    <script src="js/app.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
