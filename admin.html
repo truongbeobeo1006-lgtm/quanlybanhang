@@ -12,10 +12,9 @@
 <body>
 
     <!-- ========================================================
-         MÀN HÌNH ĐĂNG NHẬP BẮT BUỘC BAN ĐẦU CHO ADMIN
-         (Mới vào bắt buộc đăng nhập để vào hệ thống quản trị)
+         MÀN HÌNH ĐĂNG NHẬP (Chỉ hiển thị khi Admin chủ động Đăng xuất)
          ======================================================== -->
-    <div id="adminLoginScreen" style="position: fixed; inset: 0; background: #0f172a; z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 20px;">
+    <div id="adminLoginScreen" style="position: fixed; inset: 0; background: #0f172a; z-index: 99999; display: none; align-items: center; justify-content: center; padding: 20px;">
         <div style="background: #1e293b; border: 1px solid #334155; border-radius: 12px; width: 100%; max-width: 420px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); overflow: hidden;">
             <div style="padding: 30px 24px 20px 24px; text-align: center; border-bottom: 1px solid #334155;">
                 <img src="img/logo.png" alt="Mr.Huy Admin Logo" style="width: 64px; height: 64px; border-radius: 12px; margin: 0 auto 12px auto; display: block; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
@@ -409,137 +408,10 @@
     </div>
 
     <!-- ========================================================
-         CÁC MODAL GIAO DIỆN PHỤC VỤ WEB-ADMIN
+         TOÀN BỘ CHỨC NĂNG ĐÃ CHUYỂN SANG TRANG HTML RIÊNG BIỆT (KHÔNG DÙNG POPUP)
          ======================================================== -->
 
-    <!-- MODAL 1: GIAO DIỆN THÊM / SỬA SẢN PHẨM (Upload hình xem trước + Đúng phân loại) -->
-    <div class="admin-modal-overlay" id="productFormModal">
-        <div class="admin-modal-card">
-            <div class="admin-modal-header">
-                <h3 id="pModalTitle" style="font-size: 16px; font-weight: 700;">Thêm Sản Phẩm Mới</h3>
-                <button onclick="closeAdminModal('productFormModal')" style="background: none; border: none; font-size: 20px; cursor: pointer;">&times;</button>
-            </div>
-            <div class="admin-modal-body">
-                <input type="hidden" id="editingProductId" value="">
-                <div style="margin-bottom: 12px;">
-                    <label style="display: block; font-weight: 600; margin-bottom: 4px;">Tên sản phẩm *:</label>
-                    <input type="text" id="pInputName" class="form-input" style="width: 100%;" value="Ly Giữ Nhiệt Cao Cấp Inox 304 Iced Americano Kèm Ống Hút Mr.Huy (600ml)">
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
-                    <div>
-                        <!-- Đúng phân loại -->
-                        <label style="display: block; font-weight: 600; margin-bottom: 4px;">Phân loại danh mục *:</label>
-                        <select id="pSelectCat" class="form-select" style="width: 100%;">
-                            <option value="ly-giu-nhiet" selected>Ly giữ nhiệt</option>
-                            <option value="binh-the-thao">Bình thể thao</option>
-                            <option value="ly-van-phong">Ly văn phòng</option>
-                            <option value="ly-hoa-tiet">Bình nước họa tiết</option>
-                            <option value="phu-kien">Ống hút & Cọ rửa</option>
-                            <option value="hop-qua">Hộp quà tặng</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label style="display: block; font-weight: 600; margin-bottom: 4px;">Dung tích:</label>
-                        <select id="pSelectCapacity" class="form-select" style="width: 100%;">
-                            <option value="350ml">350ml</option>
-                            <option value="500ml">500ml</option>
-                            <option value="600ml" selected>600ml</option>
-                            <option value="750ml">750ml</option>
-                            <option value="900ml">900ml</option>
-                            <option value="1000ml">1000ml</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
-                    <div>
-                        <label style="display: block; font-weight: 600; margin-bottom: 4px;">Giá bán hiện tại (₫):</label>
-                        <input type="number" id="pInputPrice" class="form-input" style="width: 100%;" value="189000">
-                    </div>
-                    <div>
-                        <label style="display: block; font-weight: 600; margin-bottom: 4px;">Lượt đã bán (Khởi tạo):</label>
-                        <input type="number" id="pInputSold" class="form-input" style="width: 100%;" value="0" readonly title="Mặc định = 0 khi thêm mới">
-                    </div>
-                </div>
-
-                <!-- Có upload hình & hiển thị hình ảnh trước khi thêm (0.5đ) -->
-                <div style="margin-bottom: 14px; border: 1px dashed #cbd5e1; padding: 12px; border-radius: 6px; background: #f8fafc;">
-                    <label style="display: block; font-weight: 600; margin-bottom: 4px;">
-                        <i class="fa-solid fa-image"></i> Tải lên hình ảnh sản phẩm (Xem trước ngay):
-                    </label>
-                    <input type="file" accept="image/*" class="form-input" onchange="previewImageMock(event)">
-                    <div style="font-size: 11px; color: #64748b; margin-top: 4px;">* Khung hiển thị hình ảnh trước khi lưu:</div>
-                    <div class="img-preview-box" id="previewBoxWrap">
-                        <i class="fa-solid fa-mug-hot" id="previewIconFallback" style="font-size: 48px; color: #1e3a8a; display: none;"></i>
-                        <img id="previewImgTag" src="img/ly-giu-nhiet-1.png" alt="Xem trước ảnh" style="display: block; max-width: 100%; max-height: 100%; border-radius: 6px;">
-                    </div>
-                </div>
-
-                <div class="admin-modal-footer">
-                    <button type="button" class="btn-admin btn-admin-outline" onclick="closeAdminModal('productFormModal')">Hủy</button>
-                    <button type="button" class="btn-admin btn-admin-primary" onclick="handleSaveProductMock(event)">
-                        <i class="fa-solid fa-floppy-disk"></i> Lưu Sản Phẩm
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL 2: GIAO DIỆN THÊM / SỬA USER -->
-    <div class="admin-modal-overlay" id="userFormModal">
-        <div class="admin-modal-card" style="max-width: 500px;">
-            <div class="admin-modal-header">
-                <h3 id="uModalTitle" style="font-size: 16px; font-weight: 700;">Thêm Người Dùng</h3>
-                <button onclick="closeAdminModal('userFormModal')" style="background: none; border: none; font-size: 20px; cursor: pointer;">&times;</button>
-            </div>
-            <div class="admin-modal-body">
-                <input type="hidden" id="editingUserId" value="">
-                <div style="margin-bottom: 12px;">
-                    <label style="display: block; font-weight: 600; margin-bottom: 4px;">Tên đăng nhập:</label>
-                    <input type="text" id="uInputUsername" class="form-input" style="width: 100%;" value="nguyenvana">
-                </div>
-                <div style="margin-bottom: 12px;">
-                    <label style="display: block; font-weight: 600; margin-bottom: 4px;">Họ và tên:</label>
-                    <input type="text" id="uInputFullName" class="form-input" style="width: 100%;" value="Nguyễn Văn An">
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
-                    <div>
-                        <label style="display: block; font-weight: 600; margin-bottom: 4px;">Số điện thoại:</label>
-                        <input type="tel" id="uInputPhone" class="form-input" style="width: 100%;" value="0912345678">
-                    </div>
-                    <div>
-                        <label style="display: block; font-weight: 600; margin-bottom: 4px;">Email:</label>
-                        <input type="email" id="uInputEmail" class="form-input" style="width: 100%;" value="nguyenvana@gmail.com">
-                    </div>
-                </div>
-                <div style="margin-bottom: 12px;">
-                    <label style="display: block; font-weight: 600; margin-bottom: 4px;">Địa chỉ:</label>
-                    <input type="text" id="uInputAddress" class="form-input" style="width: 100%;" value="123 Nguyễn Huệ, Quận 1, TP.HCM">
-                </div>
-                <div class="admin-modal-footer">
-                    <button type="button" class="btn-admin btn-admin-outline" onclick="closeAdminModal('userFormModal')">Hủy</button>
-                    <button type="button" class="btn-admin btn-admin-primary" onclick="handleSaveUserMock(event)">Lưu Người Dùng</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL 3: XEM CHI TIẾT ĐƠN HÀNG TRÊN ADMIN -->
-    <div class="admin-modal-overlay" id="orderDetailAdminModal">
-        <div class="admin-modal-card">
-            <div class="admin-modal-header">
-                <h3 id="adminOrderDetailTitle" style="font-size: 16px; font-weight: 700;">Chi Tiết Đơn Hàng #DH1001</h3>
-                <button onclick="closeAdminModal('orderDetailAdminModal')" style="background: none; border: none; font-size: 20px; cursor: pointer;">&times;</button>
-            </div>
-            <div class="admin-modal-body" id="adminOrderDetailDynamicContent">
-                <!-- Populated dynamically by viewOrderDetailMock() -->
-            </div>
-            <div class="admin-modal-footer">
-                <button class="btn-admin btn-admin-outline" onclick="closeAdminModal('orderDetailAdminModal')">Đóng</button>
-            </div>
-        </div>
-    </div>
+    <!-- Tất cả chức năng Thêm/Sửa Sản Phẩm, Thêm/Sửa Người Dùng và Chi Tiết Đơn Hàng đã được chuyển sang các trang HTML riêng biệt (product-detail.html, admin-user.html, order-detail.html) -->
 
     <!-- Pure Frontend UI Logic Script for Admin (NO DATABASE, NO STORAGE) -->
     <script src="js/app.js"></script>

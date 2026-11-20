@@ -1568,6 +1568,10 @@ button, input, select, textarea {
     padding: 20px;
 }
 
+#productDetailModal {
+    z-index: 3500 !important;
+}
+
 .modal-overlay.active {
     display: flex;
 }

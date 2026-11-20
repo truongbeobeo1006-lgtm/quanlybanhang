@@ -339,6 +339,10 @@ body {
     padding: 20px;
 }
 
+#productFormModal {
+    z-index: 3500 !important;
+}
+
 .admin-modal-overlay.active {
     display: flex;
 }

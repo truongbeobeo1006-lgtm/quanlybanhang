@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi Tiết Đơn Hàng - Mr.Huy Bình & Ly Giữ Nhiệt</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Base CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            background-color: #f1f5f9;
+            color: #0f172a;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .order-detail-header {
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 16px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .header-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand-logo-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .brand-logo-img {
+            width: 42px;
+            height: 42px;
+            object-fit: contain;
+            border-radius: 8px;
+            background: #fff;
+        }
+
+        .brand-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: #0284c7;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-sub {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .btn-nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            color: #334155;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-nav-back:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+        .order-detail-container {
+            max-width: 1100px;
+            margin: 28px auto 60px auto;
+            padding: 0 20px;
+        }
+
+        .breadcrumb-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 20px;
+        }
+
+        .breadcrumb-box a {
+            color: #0284c7;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .order-main-card {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .order-card-header {
+            padding: 20px 24px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .order-id-badge {
+            font-size: 18px;
+            font-weight: 800;
+            color: #0369a1;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .status-pill.delivered {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-pill.confirmed {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .status-pill.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-pill.cancelled {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .order-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 24px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .info-block {
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid #f1f5f9;
+        }
+
+        .info-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #64748b;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .info-row {
+            font-size: 13px;
+            margin-bottom: 6px;
+            color: #334155;
+            line-height: 1.5;
+        }
+
+        .info-row strong {
+            color: #0f172a;
+        }
+
+        .order-items-box {
+            padding: 24px;
+        }
+
+        .order-items-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .product-display-box {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.2s;
+        }
+
+        .product-display-box:hover {
+            border-color: #0284c7;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.08);
+        }
+
+        .product-img-box {
+            width: 110px;
+            height: 110px;
+            flex-shrink: 0;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            background: #f8fafc;
+        }
+
+        .product-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-details {
+            flex: 1;
+        }
+
+        .product-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+
+        .product-meta-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .meta-tag {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .product-desc {
+            font-size: 12px;
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .product-pricing {
+            display: flex;
+            align-items: baseline;
+            gap: 16px;
+        }
+
+        .order-summary-box {
+            background: #f8fafc;
+            padding: 24px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .summary-card {
+            width: 100%;
+            max-width: 360px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin-bottom: 10px;
+            color: #475569;
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            font-weight: 800;
+            color: #dc2626;
+            border-top: 2px dashed #cbd5e1;
+            padding-top: 12px;
+            margin-top: 10px;
+        }
+
+        .actions-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn-action-print {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #334155;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-action-print:hover {
+            background: #f1f5f9;
+        }
+
+        .btn-action-primary {
+            background: #0284c7;
+            border: none;
+            color: #ffffff;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 13px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-action-primary:hover {
+            background: #0369a1;
+        }
+
+        @media (max-width: 640px) {
+            .product-display-box {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .product-img-box {
+                width: 100%;
+                height: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header điều hướng -->
+    <header class="order-detail-header">
+        <div class="header-content">
+            <a href="index.html" class="brand-logo-box">
+                <img src="img/logo.png" alt="Mr.Huy Logo" class="brand-logo-img">
+                <div>
+                    <div class="brand-title">Mr.Huy</div>
+                    <div class="brand-sub">Bình & Ly Giữ Nhiệt Cao Cấp</div>
+                </div>
+            </a>
+            <div id="dynamicNavBackBox">
+                <!-- Nút quay lại được thiết lập dựa theo trang xuất phát (Admin hoặc Khách hàng) -->
+                <a href="index.html" id="btnNavBack" class="btn-nav-back">
+                    <i class="fa-solid fa-arrow-left"></i> Quay lại
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="order-detail-container">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb-box">
+            <a href="index.html" id="breadcrumbRoot">Trang chủ</a>
+            <i class="fa-solid fa-angle-right"></i>
+            <span id="breadcrumbSub">Chi tiết đơn hàng</span>
+            <i class="fa-solid fa-angle-right"></i>
+            <span id="breadcrumbOrderId" style="font-weight: 700; color: #0f172a;">#DH1005</span>
+        </div>
+
+        <!-- Khung chi tiết đơn hàng -->
+        <div class="order-main-card">
+            <!-- Header đơn hàng -->
+            <div class="order-card-header">
+                <div>
+                    <span class="order-id-badge" id="dispOrderId">Đơn Hàng #DH1005</span>
+                    <span style="font-size: 13px; color: #64748b; margin-left: 12px;">
+                        <i class="fa-regular fa-clock"></i> Ngày đặt: <strong id="dispOrderDate" style="color: #0f172a;">2025-03-28</strong>
+                    </span>
+                </div>
+                <div>
+                    <span id="dispStatusPill" class="status-pill pending">
+                        <i class="fa-solid fa-circle-dot"></i> Chưa xác nhận
+                    </span>
+                </div>
+            </div>
+
+            <!-- Khối thông tin người nhận & vận chuyển -->
+            <div class="order-info-grid">
+                <div class="info-block">
+                    <div class="info-title"><i class="fa-solid fa-user"></i> Thông tin khách hàng</div>
+                    <div class="info-row">Người nhận: <strong id="dispCustomerName">Vũ Minh Tuấn</strong></div>
+                    <div class="info-row">Số điện thoại: <strong id="dispCustomerPhone">0933445566</strong></div>
+                    <div class="info-row">Email: <strong id="dispCustomerEmail">tuanvm@gmail.com</strong></div>
+                </div>
+
+                <div class="info-block">
+                    <div class="info-title"><i class="fa-solid fa-location-dot"></i> Địa chỉ giao hàng</div>
+                    <div class="info-row">Địa chỉ: <strong id="dispCustomerAddr">99 Láng Hạ, Phường Thành Công</strong></div>
+                    <div class="info-row">Khu vực: <strong id="dispCustomerArea">Quận Đống Đa, Hà Nội</strong></div>
+                    <div class="info-row">Ghi chú: <em>Giao hàng trong giờ hành chính</em></div>
+                </div>
+
+                <div class="info-block">
+                    <div class="info-title"><i class="fa-solid fa-wallet"></i> Thanh toán & Vận chuyển</div>
+                    <div class="info-row">Hình thức: <strong id="dispPaymentMethod">Thanh toán khi nhận hàng (COD)</strong></div>
+                    <div class="info-row">Đơn vị vận chuyển: <strong>Giao Hàng Hỏa Tốc Mr.Huy Express</strong></div>
+                    <div class="info-row">Thời gian dự kiến: <strong>1 - 2 ngày làm việc</strong></div>
+                </div>
+            </div>
+
+            <!-- Danh sách mặt hàng (Hiển thị về một sản phẩm duy nhất theo đúng yêu cầu) -->
+            <div class="order-items-box">
+                <div class="order-items-title">
+                    <i class="fa-solid fa-box-open" style="color: #0284c7;"></i>
+                    Sản Phẩm Trong Đơn Hàng:
+                </div>
+
+                <div class="product-display-box" style="cursor: pointer;" onclick="window.location.href = 'product-detail.html?id=SP001&from=' + (new URLSearchParams(window.location.search).get('from') || 'user')" title="Bấm để xem chi tiết sản phẩm">
+                    <div class="product-img-box">
+                        <img id="dispProductImg" src="img/ly-giu-nhiet-1.png" alt="Sản phẩm">
+                    </div>
+                    <div class="product-details">
+                        <div class="product-name" id="dispProductName">Cốc Giữ Nhiệt Inox 304 Iced Americano 600ml Kèm Ống Hút Mr.Huy</div>
+                        <div class="product-meta-tags">
+                            <span class="meta-tag">Mã SP: <span id="dispProductId">SP001</span></span>
+                            <span class="meta-tag">Phân loại: Ly giữ nhiệt</span>
+                            <span class="meta-tag">Dung tích: 600ml</span>
+                            <span class="meta-tag" style="background: #f0fdf4; color: #166534;">Inox 304 Thực Phẩm</span>
+                        </div>
+                        <div class="product-desc">
+                            Chất liệu ruột Inox 304 cao cấp đạt chuẩn an toàn vệ sinh thực phẩm quốc tế. Công nghệ cách nhiệt chân không kép giữ nóng 8 tiếng, giữ lạnh đá viên liên tục 18 tiếng không đọng sương bên ngoài. Nắp đậy có khóa chốt chống rỉ nước 100%, tích hợp lỗ uống trực tiếp và cắm ống hút tiện lợi.
+                        </div>
+                        <div class="product-pricing">
+                            <div style="font-size: 14px; color: #64748b;">
+                                Đơn giá: <strong id="dispProductUnitPrice" style="color: #0f172a; font-size: 15px;">380.000₫</strong>
+                            </div>
+                            <div style="font-size: 14px; color: #64748b;">
+                                Số lượng: <strong style="color: #0f172a; font-size: 15px;">1</strong>
+                            </div>
+                            <div style="font-size: 15px; color: #0284c7; font-weight: 700;">
+                                Thành tiền: <span id="dispProductTotal">380.000₫</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tổng kết tiền đơn hàng -->
+            <div class="order-summary-box">
+                <div class="summary-card">
+                    <div class="summary-row">
+                        <span>Tiền hàng:</span>
+                        <strong id="dispSubTotal">380.000₫</strong>
+                    </div>
+                    <div class="summary-row">
+                        <span>Phí vận chuyển:</span>
+                        <strong style="color: #166534;">Miễn phí (Freeship)</strong>
+                    </div>
+                    <div class="summary-row">
+                        <span>Giảm giá voucher:</span>
+                        <strong style="color: #64748b;">0₫</strong>
+                    </div>
+                    <div class="summary-total">
+                        <span>Tổng thanh toán:</span>
+                        <span id="dispFinalTotal">380.000₫</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Thanh thao tác phía dưới -->
+        <div class="actions-bar" style="justify-content: flex-end;">
+            <div style="display: flex; gap: 12px;">
+                <a href="tel:0988123456" class="btn-action-print">
+                    <i class="fa-solid fa-headset"></i> Hỗ trợ: 0988.123.456
+                </a>
+                <a href="index.html" id="btnBottomBack" class="btn-action-primary">
+                    <i class="fa-solid fa-arrow-left"></i> Quay lại
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Danh mục các đơn hàng chuẩn
+        const KNOWN_ORDERS = {
+            'DH1001': {
+                id: 'DH1001',
+                customerName: 'Nguyễn Văn An',
+                phone: '0912345678',
+                email: 'nguyenvana@gmail.com',
+                date: '2025-03-01',
+                address: '123 Nguyễn Huệ, Phường Bến Nghé',
+                city: 'Quận 1, TP. Hồ Chí Minh',
+                status: 'Đã giao thành công',
+                statusCode: 'delivered',
+                totalAmount: 619000,
+                paymentMethod: 'Chuyển khoản QR'
+            },
+            'DH1002': {
+                id: 'DH1002',
+                customerName: 'Trần Thị Bình',
+                phone: '0987654321',
+                email: 'binhtran@gmail.com',
+                date: '2025-03-05',
+                address: '45 Lê Lợi, Phường Bến Thành',
+                city: 'Quận 1, TP. Hồ Chí Minh',
+                status: 'Đã giao thành công',
+                statusCode: 'delivered',
+                totalAmount: 850000,
+                paymentMethod: 'Thẻ tín dụng / Ghi nợ'
+            },
+            'DH1003': {
+                id: 'DH1003',
+                customerName: 'Lê Hoàng Long',
+                phone: '0903112233',
+                email: 'longlh@gmail.com',
+                date: '2025-03-10',
+                address: '88 Hai Bà Trưng, Phường Bến Nghé',
+                city: 'Quận 1, TP. Hồ Chí Minh',
+                status: 'Đã xác nhận',
+                statusCode: 'confirmed',
+                totalAmount: 420000,
+                paymentMethod: 'Thanh toán khi nhận hàng (COD)'
+            },
+            'DH1004': {
+                id: 'DH1004',
+                customerName: 'Nguyễn Văn An',
+                phone: '0912345678',
+                email: 'nguyenvana@gmail.com',
+                date: '2025-03-15',
+                address: '123 Nguyễn Huệ, Phường Bến Nghé',
+                city: 'Quận 1, TP. Hồ Chí Minh',
+                status: 'Đã xác nhận',
+                statusCode: 'confirmed',
+                totalAmount: 1250000,
+                paymentMethod: 'Chuyển khoản QR'
+            },
+            'DH1005': {
+                id: 'DH1005',
+                customerName: 'Vũ Minh Tuấn',
+                phone: '0933445566',
+                email: 'tuanvm@gmail.com',
+                date: '2025-03-28',
+                address: '99 Láng Hạ, Phường Thành Công',
+                city: 'Quận Đống Đa, Hà Nội',
+                status: 'Chưa xác nhận',
+                statusCode: 'pending',
+                totalAmount: 380000,
+                paymentMethod: 'Thanh toán khi nhận hàng (COD)'
+            }
+        };
+
+        function formatCurrency(num) {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(num).replace('₫', '₫');
+        }
+
+        // Khởi tạo trang dựa theo URL params
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const orderId = (params.get('id') || 'DH1005').trim().toUpperCase();
+            const fromSource = params.get('from') || 'user';
+
+            // Thiết lập nút quay lại
+            const btnNav = document.getElementById('btnNavBack');
+            const btnBottom = document.getElementById('btnBottomBack');
+            const breadRoot = document.getElementById('breadcrumbRoot');
+
+            if (fromSource === 'admin') {
+                if (btnNav) {
+                    btnNav.href = 'admin.html';
+                    btnNav.innerHTML = '<i class="fa-solid fa-arrow-left"></i> Quay lại trang Quản trị';
+                }
+                if (btnBottom) {
+                    btnBottom.href = 'admin.html';
+                    btnBottom.innerHTML = '<i class="fa-solid fa-arrow-left"></i> Quay lại Quản trị';
+                }
+                if (breadRoot) {
+                    breadRoot.href = 'admin.html';
+                    breadRoot.textContent = 'Quản trị Admin';
+                }
+            } else {
+                if (btnNav) {
+                    btnNav.href = 'index.html';
+                    btnNav.innerHTML = '<i class="fa-solid fa-arrow-left"></i> Quay lại Trang chủ';
+                }
+                if (btnBottom) {
+                    btnBottom.href = 'index.html';
+                    btnBottom.innerHTML = '<i class="fa-solid fa-arrow-left"></i> Tiếp tục mua sắm';
+                }
+                if (breadRoot) {
+                    breadRoot.href = 'index.html';
+                    breadRoot.textContent = 'Trang chủ Mr.Huy';
+                }
+            }
+
+            // Lấy thông tin đơn hàng
+            let order = KNOWN_ORDERS[orderId];
+            if (!order) {
+                // Kiểm tra từ localStorage nếu có đơn mới tạo
+                try {
+                    const saved = localStorage.getItem('thermomall_orders');
+                    if (saved) {
+                        const parsed = JSON.parse(saved);
+                        order = parsed.find(o => o.id === orderId);
+                    }
+                } catch(e) {}
+            }
+
+            if (!order) {
+                order = {
+                    id: orderId,
+                    customerName: 'Nguyễn Văn An',
+                    phone: '0912345678',
+                    email: 'nguyenvana@gmail.com',
+                    date: '2025-03-28',
+                    address: '123 Nguyễn Huệ, Phường Bến Nghé',
+                    city: 'Quận 1, TP. Hồ Chí Minh',
+                    status: 'Đã xác nhận',
+                    statusCode: 'confirmed',
+                    totalAmount: 189000,
+                    paymentMethod: 'Thanh toán khi nhận hàng (COD)'
+                };
+            }
+
+            // Điền dữ liệu vào giao diện
+            document.title = `Chi Tiết Đơn Hàng #${order.id} - Mr.Huy`;
+            document.getElementById('breadcrumbOrderId').textContent = `#${order.id}`;
+            document.getElementById('dispOrderId').textContent = `Đơn Hàng #${order.id}`;
+            document.getElementById('dispOrderDate').textContent = order.date;
+
+            document.getElementById('dispCustomerName').textContent = order.customerName;
+            document.getElementById('dispCustomerPhone').textContent = order.phone;
+            document.getElementById('dispCustomerEmail').textContent = order.email;
+            document.getElementById('dispCustomerAddr').textContent = order.address;
+            document.getElementById('dispCustomerArea').textContent = order.city;
+            document.getElementById('dispPaymentMethod').textContent = order.paymentMethod || 'Thanh toán khi nhận hàng (COD)';
+
+            // Status pill
+            const statusEl = document.getElementById('dispStatusPill');
+            if (statusEl) {
+                statusEl.className = 'status-pill ' + (order.statusCode || 'confirmed');
+                statusEl.innerHTML = `<i class="fa-solid fa-circle-dot"></i> ${order.status}`;
+            }
+
+            // Hiển thị sản phẩm duy nhất theo đúng yêu cầu
+            const formattedTotal = formatCurrency(order.totalAmount);
+            document.getElementById('dispProductUnitPrice').textContent = formattedTotal;
+            document.getElementById('dispProductTotal').textContent = formattedTotal;
+            document.getElementById('dispSubTotal').textContent = formattedTotal;
+            document.getElementById('dispFinalTotal').textContent = formattedTotal;
+        });
+    </script>
+</body>
+</html>

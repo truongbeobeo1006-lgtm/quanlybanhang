@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Người Dùng - Mr.Huy Admin</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Admin CSS -->
+    <link rel="stylesheet" href="css/admin.css">
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .admin-page-header {
+            background: #1e293b;
+            border-bottom: 1px solid #334155;
+            padding: 16px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .brand-logo-img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            border-radius: 8px;
+            background: #fff;
+        }
+
+        .admin-user-container {
+            max-width: 900px;
+            margin: 32px auto 60px auto;
+            padding: 0 20px;
+        }
+
+        .card-admin {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+
+        .card-head {
+            padding: 20px 24px;
+            border-bottom: 1px solid #334155;
+            background: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .form-body-admin {
+            padding: 28px;
+        }
+
+        .form-row-admin {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .form-group-a {
+            margin-bottom: 16px;
+        }
+
+        .label-a {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: #cbd5e1;
+            margin-bottom: 6px;
+        }
+
+        .input-a, .select-a {
+            width: 100%;
+            padding: 10px 14px;
+            background: #0f172a;
+            border: 1px solid #475569;
+            color: #ffffff;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .input-a:focus, .select-a:focus {
+            border-color: #38bdf8;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+        }
+
+        .btn-cancel-a {
+            background: transparent;
+            border: 1px solid #64748b;
+            color: #cbd5e1;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-cancel-a:hover {
+            background: #334155;
+            color: #fff;
+        }
+
+        .btn-save-a {
+            background: #0284c7;
+            border: none;
+            color: #ffffff;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-save-a:hover {
+            background: #0369a1;
+        }
+
+        #adminUserToast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 999999;
+            background: #1e293b;
+            border-left: 4px solid #10b981;
+            color: #fff;
+            padding: 14px 20px;
+            border-radius: 6px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5);
+        }
+
+        @media (max-width: 600px) {
+            .form-row-admin {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="adminUserToast">
+        <i class="fa-solid fa-circle-check" style="color: #10b981; font-size: 18px;"></i>
+        <span id="toastMsgAdmin" style="font-weight: 600;">Đã lưu thông tin người dùng!</span>
+    </div>
+
+    <header class="admin-page-header">
+        <div class="header-content">
+            <a href="admin.html" class="brand-box">
+                <img src="img/logo.png" alt="Mr.Huy Logo" class="brand-logo-img">
+                <div>
+                    <div style="font-size: 18px; font-weight: 800; color: #38bdf8;">Mr.Huy ADMIN</div>
+                    <div style="font-size: 11px; color: #94a3b8; font-weight: 600; text-transform: uppercase;">Quản Trị Người Dùng</div>
+                </div>
+            </a>
+            <a href="admin.html" class="btn-cancel-a">
+                <i class="fa-solid fa-arrow-left"></i> Quay lại Quản trị Admin
+            </a>
+        </div>
+    </header>
+
+    <div class="admin-user-container">
+        <!-- Breadcrumb -->
+        <div style="font-size: 13px; color: #94a3b8; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+            <a href="admin.html" style="color: #38bdf8; text-decoration: none; font-weight: 600;">Quản trị Admin</a>
+            <i class="fa-solid fa-angle-right"></i>
+            <span style="color: #cbd5e1;">Quản lý người dùng</span>
+            <i class="fa-solid fa-angle-right"></i>
+            <span id="breadMode" style="font-weight: 700; color: #fff;">Chỉnh sửa tài khoản</span>
+        </div>
+
+        <div class="card-admin">
+            <div class="card-head">
+                <div>
+                    <h2 id="cardTitleAdmin" style="font-size: 18px; font-weight: 800; color: #fff; margin: 0;">
+                        Chỉnh Sửa Thông Tin Tài Khoản Người Dùng
+                    </h2>
+                    <div style="font-size: 12px; color: #94a3b8; margin-top: 4px;">
+                        Quản lý hồ sơ, quyền hạn và trạng thái kích hoạt tài khoản khách hàng
+                    </div>
+                </div>
+                <span style="background: #0284c7; color: #fff; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 700;">
+                    User Management
+                </span>
+            </div>
+
+            <form class="form-body-admin" onsubmit="handleSaveUser(event)">
+                <div class="form-row-admin">
+                    <div>
+                        <label class="label-a">Tên đăng nhập (Username) *:</label>
+                        <input type="text" id="uUsername" class="input-a" value="nguyenvana" required>
+                    </div>
+                    <div>
+                        <label class="label-a">Họ và tên người dùng *:</label>
+                        <input type="text" id="uFullName" class="input-a" value="Nguyễn Văn An" required>
+                    </div>
+                </div>
+
+                <div class="form-row-admin">
+                    <div>
+                        <label class="label-a">Số điện thoại *:</label>
+                        <input type="tel" id="uPhone" class="input-a" value="0912345678" required>
+                    </div>
+                    <div>
+                        <label class="label-a">Địa chỉ Email:</label>
+                        <input type="email" id="uEmail" class="input-a" value="nguyenvana@gmail.com">
+                    </div>
+                </div>
+
+                <div class="form-row-admin">
+                    <div>
+                        <label class="label-a">Trạng thái tài khoản:</label>
+                        <select id="uStatus" class="select-a">
+                            <option value="active" selected>Hoạt động (Bình thường)</option>
+                            <option value="locked">Bị khóa (Tạm dừng)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="label-a">Vai trò hệ thống:</label>
+                        <select id="uRole" class="select-a">
+                            <option value="user" selected>Khách hàng (User)</option>
+                            <option value="admin">Quản trị viên (Admin)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group-a">
+                    <label class="label-a">Địa chỉ giao hàng:</label>
+                    <input type="text" id="uAddress" class="input-a" value="123 Nguyễn Huệ, Quận 1, TP.HCM">
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; border-top: 1px solid #334155; padding-top: 20px;">
+                    <a href="admin.html" class="btn-cancel-a">
+                        Hủy bỏ
+                    </a>
+                    <button type="submit" class="btn-save-a">
+                        <i class="fa-solid fa-floppy-disk"></i> Lưu Người Dùng
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const mode = params.get('mode') || 'edit';
+            const username = params.get('id') || 'nguyenvana';
+
+            if (mode === 'add') {
+                document.getElementById('cardTitleAdmin').textContent = 'Thêm Người Dùng Mới Vào Hệ Thống';
+                document.getElementById('breadMode').textContent = 'Thêm người dùng mới';
+                document.getElementById('uUsername').value = '';
+                document.getElementById('uFullName').value = '';
+                document.getElementById('uPhone').value = '';
+                document.getElementById('uEmail').value = '';
+                document.getElementById('uAddress').value = '';
+            } else {
+                document.getElementById('cardTitleAdmin').textContent = `Chỉnh Sửa Tài Khoản: [${username}]`;
+            }
+        });
+
+        function handleSaveUser(e) {
+            e.preventDefault();
+            const toast = document.getElementById('adminUserToast');
+            if (toast) {
+                toast.style.display = 'flex';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                    window.location.href = 'admin.html';
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -55,17 +55,17 @@ window.alert = function(msg) {
 
 // 0. SẢN PHẨM CHUẨN (ĐỒNG BỘ HIỂN THỊ VỚI PHÍA INDEX NGƯỜI DÙNG)
 const FLAGSHIP_PRODUCT = {
-    id: 'SP-MRHUY-01',
-    name: 'Ly Giữ Nhiệt Cao Cấp Inox 304 Iced Americano Kèm Ống Hút Mr.Huy (600ml)',
+    id: 'SP001',
+    name: 'Cốc Giữ Nhiệt Inox 304 Iced Americano 600ml Kèm Ống Hút Mr.Huy',
     category: 'ly-giu-nhiet',
     catName: 'Ly giữ nhiệt',
     capacity: '600ml',
     price: 189000,
     oldPrice: 250000,
-    sold: 1240,
+    sold: 1250,
     rating: '4.9 (1.2k+ đánh giá)',
     image: 'img/ly-giu-nhiet-1.png',
-    desc: 'Chất liệu ruột Inox 304 cao cấp đạt chuẩn an toàn vệ sinh thực phẩm quốc tế. Công nghệ cách nhiệt chân không kép giữ nóng 8 tiếng, giữ lạnh đá viên liên tục 18 tiếng không đọng sương bên ngoài. Nắp đậy có khóa chặt chống rò nước 100%, tích hợp lỗ uống trực tiếp và cắm ống hút tiện lợi.'
+    desc: 'Chất liệu ruột Inox 304 cao cấp đạt chuẩn an toàn vệ sinh thực phẩm quốc tế. Công nghệ cách nhiệt chân không kép giữ nóng 8 tiếng, giữ lạnh đá viên liên tục 18 tiếng không đọng sương bên ngoài. Nắp đậy có khóa chốt chống rỉ nước 100%, tích hợp lỗ uống trực tiếp và cắm ống hút tiện lợi.'
 };
 
 // 1. DỮ LIỆU SẢN PHẨM QUẢN TRỊ (ĐỒNG BỘ TỪ PRODUCTS_DATA 40 SẢN PHẨM)
@@ -238,6 +238,7 @@ function handleAdminLoginSubmit(e) {
     if (loginScreen) loginScreen.style.display = 'none';
     if (mainLayout) mainLayout.style.display = 'flex';
 
+    localStorage.setItem('admin_logged_in', 'true');
     showToast(`Chào mừng "${displayName}" đã đăng nhập vào hệ thống Mr.Huy Admin!`, 'success', 'Đăng nhập Admin');
 }
 
@@ -248,7 +249,22 @@ function handleAdminLogoutMock() {
     if (mainLayout) mainLayout.style.display = 'none';
     if (loginScreen) loginScreen.style.display = 'flex';
 
-    showToast('Bạn đã đăng xuất tài khoản Quản trị thành công!', 'info', 'Đăng xuất Admin');
+    localStorage.setItem('admin_logged_in', 'false');
+    showToast('Quản trị viên đã đăng xuất an toàn khỏi hệ thống!', 'info', 'Đăng xuất Admin');
+}
+
+function checkAdminAuthState() {
+    const isLoggedOut = localStorage.getItem('admin_logged_in') === 'false';
+    const loginScreen = document.getElementById('adminLoginScreen');
+    const mainLayout = document.getElementById('adminMainLayout');
+
+    if (isLoggedOut) {
+        if (loginScreen) loginScreen.style.display = 'flex';
+        if (mainLayout) mainLayout.style.display = 'none';
+    } else {
+        if (loginScreen) loginScreen.style.display = 'none';
+        if (mainLayout) mainLayout.style.display = 'flex';
+    }
 }
 
 function switchAdminTab(tab) {
@@ -357,12 +373,12 @@ function renderAdminProducts(list = null) {
 
         return `
             <tr id="adminRow_${prod.id}">
-                <td><strong>${prod.id}</strong></td>
+                <td><strong style="cursor: pointer; color: #2563eb;" onclick="openEditProductModal('${prod.id}')">${prod.id}</strong></td>
                 <td>
-                    <img src="${prod.image}" alt="${prod.name}" style="width: 44px; height: 44px; object-fit: cover; border-radius: 6px; border: 1px solid #e2e8f0; vertical-align: middle;">
+                    <img src="${prod.image}" alt="${prod.name}" style="width: 44px; height: 44px; object-fit: cover; border-radius: 6px; border: 1px solid #e2e8f0; vertical-align: middle; cursor: pointer;" onclick="openEditProductModal('${prod.id}')">
                 </td>
                 <td>
-                    <strong style="font-size: 13px; color: #0f172a;">${prod.name}</strong>
+                    <strong style="font-size: 13px; color: #0f172a; cursor: pointer;" onclick="openEditProductModal('${prod.id}')">${prod.name}</strong>
                     <div style="font-size: 11px; color: #64748b;">Đánh giá: ⭐ ${prod.rating || 5.0}</div>
                 </td>
                 <td><span style="background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">${getCatText(prod.category)}</span></td>
@@ -376,7 +392,8 @@ function renderAdminProducts(list = null) {
                 <td id="statusCell_${prod.id}">${statusBadge}</td>
                 <td>
                     <div style="display: flex; gap: 4px;">
-                        <button class="btn-admin btn-admin-outline" style="padding: 4px 8px; font-size: 11px;" onclick="openEditProductModal('${prod.id}')"><i class="fa-solid fa-pen"></i> Sửa</button>
+                        <button class="btn-admin btn-admin-outline" style="padding: 4px 8px; font-size: 11px;" onclick="openEditProductModal('${prod.id}')" title="Xem chi tiết sản phẩm"><i class="fa-solid fa-eye"></i> Xem</button>
+                        <button class="btn-admin btn-admin-outline" style="padding: 4px 8px; font-size: 11px;" onclick="openEditProductModal('${prod.id}')" title="Sửa thông tin sản phẩm"><i class="fa-solid fa-pen"></i> Sửa</button>
                         ${actionBtn}
                     </div>
                 </td>
@@ -424,46 +441,13 @@ function handleDeleteProduct(id) {
 }
 
 function openAddProductModal() {
-    document.getElementById('pModalTitle').textContent = 'Thêm Sản Phẩm Mới (Có Preview Ảnh)';
-    document.getElementById('editingProductId').value = '';
-    document.getElementById('pInputName').value = '';
-    document.getElementById('pSelectCat').value = 'ly-giu-nhiet';
-    document.getElementById('pSelectCapacity').value = '500ml';
-    document.getElementById('pInputPrice').value = '189000';
-    document.getElementById('pInputSold').value = '0';
-    
-    const previewImg = document.getElementById('previewImgTag');
-    const fallback = document.getElementById('previewIconFallback');
-    if (previewImg && fallback) {
-        previewImg.src = '';
-        previewImg.style.display = 'none';
-        fallback.style.display = 'flex';
-    }
-    openAdminModal('productFormModal');
+    // Chuyển hướng sang trang HTML riêng biệt (product-detail.html) thay vì mở popup
+    window.location.href = `product-detail.html?mode=add&from=admin`;
 }
 
 function openEditProductModal(id) {
-    const prod = ADMIN_PRODUCTS.find(p => p.id === id) || ADMIN_PRODUCTS[0];
-    if (!prod) return;
-
-    document.getElementById('pModalTitle').textContent = `Sửa Sản Phẩm: [${prod.id}] ${prod.name}`;
-    document.getElementById('editingProductId').value = prod.id;
-    document.getElementById('pInputName').value = prod.name;
-    document.getElementById('pSelectCat').value = prod.category;
-    document.getElementById('pSelectCapacity').value = prod.capacity || '500ml';
-    document.getElementById('pInputPrice').value = prod.price;
-    document.getElementById('pInputSold').value = prod.sold;
-
-    // Xem trước hình ảnh thật của đúng sản phẩm này
-    const previewImg = document.getElementById('previewImgTag');
-    const fallback = document.getElementById('previewIconFallback');
-    if (previewImg && fallback) {
-        previewImg.src = prod.image;
-        previewImg.style.display = 'block';
-        fallback.style.display = 'none';
-    }
-
-    openAdminModal('productFormModal');
+    // Chuyển hướng sang trang HTML riêng biệt (product-detail.html) thay vì mở popup
+    window.location.href = `product-detail.html?id=SP001&mode=edit&from=admin`;
 }
 
 function previewImageMock(event) {
@@ -613,28 +597,15 @@ function toggleLockUser(uId) {
 }
 
 function openAddUserModal() {
-    document.getElementById('uModalTitle').textContent = 'Thêm Người Dùng Mới';
-    document.getElementById('editingUserId').value = '';
-    document.getElementById('uInputUsername').value = '';
-    document.getElementById('uInputFullName').value = '';
-    document.getElementById('uInputPhone').value = '';
-    document.getElementById('uInputEmail').value = '';
-    document.getElementById('uInputAddress').value = '';
-    openAdminModal('userFormModal');
+    // Chuyển hướng sang trang HTML riêng biệt (admin-user.html) thay vì mở popup
+    window.location.href = 'admin-user.html?mode=add';
 }
 
 function openEditUserModal(uId) {
+    // Chuyển hướng sang trang HTML riêng biệt (admin-user.html) thay vì mở popup
     const user = ADMIN_USERS.find(u => u.id === uId);
-    if (!user) return;
-
-    document.getElementById('uModalTitle').textContent = `Sửa Tài Khoản: ${user.username}`;
-    document.getElementById('editingUserId').value = user.id;
-    document.getElementById('uInputUsername').value = user.username;
-    document.getElementById('uInputFullName').value = user.fullName;
-    document.getElementById('uInputPhone').value = user.phone;
-    document.getElementById('uInputEmail').value = user.email;
-    document.getElementById('uInputAddress').value = user.address;
-    openAdminModal('userFormModal');
+    const uName = user ? user.username : (uId || 'nguyenvana');
+    window.location.href = `admin-user.html?id=${encodeURIComponent(uName)}&mode=edit`;
 }
 
 function handleSaveUserMock(e) {
@@ -952,104 +923,23 @@ function resetCustomerStatistics() {
 }
 
 // ========================================================
-// 9. XEM CHI TIẾT ĐƠN HÀNG TRÊN MODAL ADMIN
+// 9. XEM CHI TIẾT ĐƠN HÀNG TRÊN TRANG HTML RIÊNG (KHÔNG DÙNG POPUP)
 // ========================================================
 
 function viewOrderDetailMock(orderId) {
-    const order = ADMIN_ORDERS.find(o => o.id === orderId) || {
-        id: orderId,
-        customerName: 'Nguyễn Văn An',
-        phone: '0912345678',
-        email: 'nguyenvana@gmail.com',
-        date: '2025-03-01',
-        address: '123 Nguyễn Huệ, Quận 1, TP.HCM',
-        district: 'Quận 1',
-        city: 'TP. Hồ Chí Minh',
-        status: 'Đã xác nhận',
-        totalAmount: 189000
-    };
-
-    const titleEl = document.getElementById('adminOrderDetailTitle');
-    if (titleEl) titleEl.textContent = `Chi Tiết Đơn Hàng #${order.id}`;
-
-    const container = document.getElementById('adminOrderDetailDynamicContent');
-    if (container) {
-        // Hiển thị chi tiết đơn hàng
-        container.innerHTML = `
-            <div style="background: #f8fafc; padding: 12px; border-radius: 6px; margin-bottom: 14px; font-size: 13px;">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                    <div>Khách hàng: <strong>${order.customerName}</strong></div>
-                    <div>Số điện thoại: <strong>${order.phone}</strong></div>
-                    <div>Email: <strong>${order.email}</strong></div>
-                    <div>Ngày đặt: <strong style="color: #1e3a8a;">${order.date}</strong></div>
-                    <div style="grid-column: 1 / -1;">Địa chỉ giao: <strong>${order.address}</strong></div>
-                    <div>Khu vực: <strong>${order.district || ''}, ${order.city}</strong></div>
-                    <div>Tình trạng: <strong>${order.status}</strong></div>
-                </div>
-            </div>
-            <h4 style="font-size: 13px; font-weight: 700; margin-bottom: 8px;">MẶT HÀNG TRONG ĐƠN:</h4>
-            <div class="table-responsive">
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Hình Ảnh</th>
-                            <th>Tên Sản Phẩm</th>
-                            <th>Phân Loại</th>
-                            <th>Đơn Giá</th>
-                            <th>Số Lượng</th>
-                            <th>Thành Tiền</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${(order.items && order.items.length > 0) ? order.items.map(it => {
-                            const itemImg = it.image || 'img/ly-giu-nhiet-1.png';
-                            const itemTotal = (it.price || order.totalAmount) * (it.qty || 1);
-                            return `
-                                <tr>
-                                    <td>
-                                        <img src="${itemImg}" alt="${it.name}" style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid #e2e8f0; vertical-align: middle;">
-                                    </td>
-                                    <td>
-                                        <strong style="color: #0f172a; font-size: 13px;">${it.name}</strong>
-                                        <div style="font-size: 11px; color: #64748b;">Chất liệu Inox giữ nhiệt an toàn sức khỏe</div>
-                                    </td>
-                                    <td><span style="background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">${it.cat || 'Bình & Ly'}</span></td>
-                                    <td>${formatCurrencyAdmin(it.price || order.totalAmount)}</td>
-                                    <td style="text-align: center;"><strong>${it.qty || 1}</strong></td>
-                                    <td style="font-weight: 700; color: #dc2626;">${formatCurrencyAdmin(itemTotal)}</td>
-                                </tr>
-                            `;
-                        }).join('') : `
-                            <tr>
-                                <td>
-                                    <img src="img/ly-giu-nhiet-1.png" alt="Sản phẩm" style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid #e2e8f0; vertical-align: middle;">
-                                </td>
-                                <td>
-                                    <strong style="color: #0f172a; font-size: 13px;">Ly Giữ Nhiệt Inox 304 Mr.Huy</strong>
-                                    <div style="font-size: 11px; color: #64748b;">Chất liệu Inox giữ nhiệt an toàn</div>
-                                </td>
-                                <td><span style="background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">Ly giữ nhiệt</span></td>
-                                <td>${formatCurrencyAdmin(order.totalAmount)}</td>
-                                <td style="text-align: center;"><strong>1</strong></td>
-                                <td style="font-weight: 700; color: #dc2626;">${formatCurrencyAdmin(order.totalAmount)}</td>
-                            </tr>
-                        `}
-                    </tbody>
-                </table>
-            </div>
-            <div style="text-align: right; margin-top: 14px; font-size: 17px; font-weight: 800; color: #dc2626;">
-                TỔNG TIỀN ĐƠN: ${formatCurrencyAdmin(order.totalAmount)}
-            </div>
-        `;
-    }
-
-    openAdminModal('orderDetailAdminModal');
+    // Chuyển hướng sang trang chi tiết đơn hàng HTML riêng biệt (order-detail.html)
+    window.location.href = `order-detail.html?id=${encodeURIComponent(orderId)}&from=admin`;
 }
 
-// Modal helpers
+// Modal helpers with dynamic z-index stacking
+let adminModalZIndex = 3000;
 function openAdminModal(id) {
     const el = document.getElementById(id);
-    if (el) el.classList.add('active');
+    if (el) {
+        adminModalZIndex += 20;
+        el.style.zIndex = adminModalZIndex;
+        el.classList.add('active');
+    }
 }
 
 function closeAdminModal(id) {
@@ -1080,6 +970,7 @@ function updateDashboardMetrics() {
 // ========================================================
 
 document.addEventListener('DOMContentLoaded', () => {
+    checkAdminAuthState();
     initAdminProducts();
     renderAdminProducts();
     renderAdminUsers();

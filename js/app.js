@@ -858,6 +858,7 @@ function handleInitialLogin(e) {
     if (loginScreen) loginScreen.style.display = 'none';
     if (storeApp) storeApp.style.display = 'block';
 
+    localStorage.setItem('user_logged_in', 'true');
     updateAuthStateUI();
     renderProducts();
     renderOrderHistory();
@@ -969,45 +970,45 @@ function handleLogoutMock() {
     const dropdown = document.getElementById('userMenuDropdown');
     if (dropdown) dropdown.classList.remove('show');
 
+    // Không làm sập trang chính, chuyển sang trạng thái khách và hiện thông báo
+    localStorage.setItem('user_logged_in', 'false');
+    showToast('Bạn đã đăng xuất tài khoản thành công! Nhấn Đăng nhập để vào lại.', 'info', 'Đăng xuất');
+}
+
+function checkUserAuthState() {
+    // Mặc định luôn mở sẵn giao diện cửa hàng, không ép buộc màn hình đăng nhập chắn mắt
     const loginScreen = document.getElementById('userLoginScreen');
     const storeApp = document.getElementById('storeMainApp');
 
-    if (storeApp) storeApp.style.display = 'none';
-    if (loginScreen) {
-        loginScreen.style.display = 'flex';
-        toggleInitForgotView(false);
-    }
+    if (loginScreen) loginScreen.style.display = 'none';
+    if (storeApp) storeApp.style.display = 'block';
 
-    showToast('Bạn đã đăng xuất tài khoản thành công!', 'info', 'Đăng xuất');
+    const isLoggedOut = localStorage.getItem('user_logged_in') === 'false';
+    if (isLoggedOut) {
+        currentUserDisplay = null;
+    } else {
+        if (!currentUserDisplay) {
+            currentUserDisplay = {
+                name: 'Nguyễn Văn An',
+                username: 'nguyenvana',
+                phone: '0901234567',
+                email: 'nguyenvana@gmail.com',
+                city: 'Hồ Chí Minh',
+                address: '123 Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh'
+            };
+        }
+    }
+    updateAuthStateUI();
 }
 
 // --------------------------------------------------------
-// CHỨC NĂNG CHỈNH SỬA THÔNG TIN CÁ NHÂN KHÁCH HÀNG
+// CHỨC NĂNG CHỈNH SỬA THÔNG TIN CÁ NHÂN KHÁCH HÀNG (TRANG HTML RIÊNG)
 // --------------------------------------------------------
 function openUserProfileModal() {
     const dropdown = document.getElementById('userMenuDropdown');
     if (dropdown) dropdown.classList.remove('show');
-
-    if (!currentUserDisplay) {
-        showToast('Vui lòng đăng nhập để chỉnh sửa thông tin cá nhân!', 'warning');
-        return;
-    }
-
-    const uInput = document.getElementById('profileUsername');
-    const nInput = document.getElementById('profileFullName');
-    const pInput = document.getElementById('profilePhone');
-    const eInput = document.getElementById('profileEmail');
-    const cInput = document.getElementById('profileCity');
-    const aInput = document.getElementById('profileAddress');
-
-    if (uInput) uInput.value = currentUserDisplay.username || 'nguyenvana';
-    if (nInput) nInput.value = currentUserDisplay.name || 'Nguyễn Văn An';
-    if (pInput) pInput.value = currentUserDisplay.phone || '0901234567';
-    if (eInput) eInput.value = currentUserDisplay.email || 'nguyenvana@gmail.com';
-    if (cInput) cInput.value = currentUserDisplay.city || 'Hồ Chí Minh';
-    if (aInput) aInput.value = currentUserDisplay.address || '123 Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh';
-
-    openModal('userProfileModal');
+    // Chuyển hướng sang trang HTML riêng biệt (profile.html) không dùng popup
+    window.location.href = 'profile.html';
 }
 
 function handleSaveUserProfile(e) {
@@ -1078,8 +1079,8 @@ function updateAuthStateUI() {
 }
 
 function openAuthModal(mode) {
-    switchAuthMode(mode);
-    openModal('authModal');
+    // Chuyển hướng sang trang HTML riêng biệt (login.html) không dùng popup
+    window.location.href = `login.html?mode=${encodeURIComponent(mode || 'login')}`;
 }
 
 function switchAuthMode(mode) {
@@ -1711,10 +1712,10 @@ function renderOrderHistory() {
         if (order.statusCode === 'cancelled') statusBadgeClass = 'status-cancelled';
 
         const itemsHtml = order.items.map((item, idx) => `
-            <div style="display: flex; justify-content: space-between; font-size: 13px; padding: 6px 0; ${idx < order.items.length - 1 ? 'border-bottom: 1px dashed #e2e8f0;' : ''}">
+            <div style="display: flex; justify-content: space-between; font-size: 13px; padding: 6px 0; cursor: pointer; ${idx < order.items.length - 1 ? 'border-bottom: 1px dashed #e2e8f0;' : ''}" onclick="viewOrderDetailPage('${order.id}')">
                 <div>
-                    <strong>${escapeHtml(item.name)}</strong>
-                    <span style="font-size: 11px; color: var(--text-muted); margin-left: 6px;">(${item.capacity})</span>
+                    <strong style="color: #2563eb; text-decoration: underline;">${escapeHtml(item.name)}</strong>
+                    <span style="font-size: 11px; color: var(--text-muted); margin-left: 6px;">(${item.capacity || '600ml'})</span>
                     <span style="color: var(--accent-orange); font-weight: 700; margin-left: 6px;">x ${item.qty}</span>
                 </div>
                 <span style="font-weight: 700; color: var(--text-main);">${formatCurrency(item.total)}</span>
@@ -1722,7 +1723,7 @@ function renderOrderHistory() {
         `).join('');
 
         return `
-            <div class="order-history-card">
+            <div class="order-history-card" style="cursor: pointer;" onclick="viewOrderDetailPage('${order.id}')">
                 <div class="order-history-header">
                     <div>
                         <strong style="color: var(--primary-color); font-size: 15px;">Mã đơn: #${order.id}</strong>
@@ -1730,9 +1731,14 @@ function renderOrderHistory() {
                             <i class="fa-regular fa-calendar-days"></i> Ngày đặt: ${order.date}
                         </span>
                     </div>
-                    <span class="order-status-badge ${statusBadgeClass}">
-                        <i class="fa-solid fa-circle-dot" style="font-size: 9px; margin-right: 4px;"></i>${order.status}
-                    </span>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <button type="button" class="btn btn-primary" style="padding: 4px 10px; font-size: 11px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;" onclick="event.stopPropagation(); viewOrderDetailPage('${order.id}');">
+                            <i class="fa-solid fa-file-invoice"></i> Xem chi tiết đơn
+                        </button>
+                        <span class="order-status-badge ${statusBadgeClass}">
+                            <i class="fa-solid fa-circle-dot" style="font-size: 9px; margin-right: 4px;"></i>${order.status}
+                        </span>
+                    </div>
                 </div>
                 <div style="margin-bottom: 10px; font-size: 12px; color: var(--text-muted); line-height: 1.6;">
                     <div><i class="fa-solid fa-user"></i> Người nhận: <strong>${escapeHtml(order.customerName)}</strong> - SĐT: <strong>${order.phone}</strong></div>
@@ -1750,6 +1756,11 @@ function renderOrderHistory() {
             </div>
         `;
     }).join('');
+}
+
+function viewOrderDetailPage(orderId) {
+    // Điều hướng sang trang HTML riêng biệt (order-detail.html) thay vì mở popup
+    window.location.href = `order-detail.html?id=${encodeURIComponent(orderId)}&from=user`;
 }
 
 function finishOrderDemo() {
@@ -1815,72 +1826,53 @@ function finishOrderDemo() {
 function openOrderHistoryModal() {
     const dropdown = document.getElementById('userMenuDropdown');
     if (dropdown) dropdown.classList.remove('show');
-    renderOrderHistory();
-    openModal('orderHistoryModal');
+    // Chuyển hướng sang trang HTML riêng biệt (order-history.html) không dùng popup
+    window.location.href = 'order-history.html';
 }
 
 
 // ========================================================
+// 6. TRANG CHI TIẾT SẢN PHẨM: BẤM VÀO BẤT KỲ SẢN PHẨM HOẶC
+//    ĐƯỜNG DẪN NÀO ĐỀU HIỂN THỊ VỀ MỘT SẢN PHẨM DUY NHẤT
 // ========================================================
-// 6. MODAL CHI TIẾT SẢN PHẨM: HIỂN THỊ ĐẦY ĐỦ ẢNH THẬT &
-//    THÔNG TIN CỦA TỪNG SẢN PHẨM KHÁCH HÀNG CHỌN
-// ========================================================
+
+const SINGLE_DISPLAY_PRODUCT = {
+    id: 'SP001',
+    name: 'Cốc Giữ Nhiệt Inox 304 Iced Americano 600ml Kèm Ống Hút Mr.Huy',
+    price: 189000,
+    oldPrice: 250000,
+    sold: '1.2k+ (lượt bán)',
+    rating: '4.9 (1.2k+ đánh giá)',
+    image: 'img/ly-giu-nhiet-1.png',
+    capacity: '600ml',
+    category: 'ly-giu-nhiet',
+    categoryName: 'Ly giữ nhiệt',
+    description: 'Chất liệu ruột Inox 304 cao cấp đạt chuẩn an toàn vệ sinh thực phẩm quốc tế. Công nghệ cách nhiệt chân không kép giữ nóng 8 tiếng, giữ lạnh đá viên liên tục 18 tiếng không đọng sương bên ngoài. Nắp đậy có khóa chốt chống rỉ nước 100%, tích hợp lỗ uống trực tiếp và cắm ống hút tiện lợi.'
+};
 
 function openProductDetailModal(id) {
-    let prod = null;
-    if (id) {
-        prod = PRODUCTS_DATA.find(p => p.id === id);
-    }
-    if (!prod) {
-        prod = PRODUCTS_DATA[0];
-    }
-
-    const titleEl = document.getElementById('dModalTitle');
-    const nameEl = document.getElementById('dProdName');
-    const idEl = document.getElementById('dProdId');
-    const priceEl = document.getElementById('dProdPrice');
-    const oldPriceEl = document.getElementById('dProdOldPrice');
-    const descEl = document.getElementById('dProdDesc');
-    const imgEl = document.getElementById('dProdImg');
-    const soldEl = document.getElementById('dProdSold');
-    const ratingEl = document.getElementById('dProdRating');
-
-    if (titleEl) titleEl.textContent = `Chi Tiết: ${prod.name}`;
-    if (nameEl) nameEl.textContent = prod.name;
-    if (idEl) idEl.textContent = prod.id;
-    if (priceEl) priceEl.textContent = formatCurrency(prod.price);
-    if (oldPriceEl) oldPriceEl.textContent = prod.oldPrice ? formatCurrency(prod.oldPrice) : '';
-    if (descEl) descEl.textContent = prod.description || 'Chất liệu ruột Inox 304/316 cao cấp đạt chuẩn an toàn vệ sinh thực phẩm quốc tế. Công nghệ cách nhiệt chân không kép giữ nóng 8 tiếng, giữ lạnh đá viên liên tục 18 tiếng không đọng sương bên ngoài.';
-    if (imgEl) {
-        imgEl.src = prod.image;
-        imgEl.alt = prod.name;
-    }
-    if (soldEl) soldEl.textContent = formatSold(prod.sold);
-    if (ratingEl) ratingEl.innerHTML = `<i class="fa-solid fa-star"></i> ${prod.rating || 5.0} (${formatSold(prod.sold)} lượt bán)`;
-
-    const qtyInput = document.getElementById('detailQtyInput');
-    if (qtyInput) qtyInput.value = 1;
-
-    openModal('productDetailModal');
+    // Điều hướng sang trang HTML riêng biệt (product-detail.html) thay vì dùng popup
+    window.location.href = `product-detail.html?id=SP001&from=user`;
 }
 
 function adjustQty(delta) {
     const input = document.getElementById('detailQtyInput');
-    let v = parseInt(input.value) || 1;
-    v += delta;
-    if (v < 1) v = 1;
-    input.value = v;
+    if (input) {
+        let v = parseInt(input.value) || 1;
+        v += delta;
+        if (v < 1) v = 1;
+        input.value = v;
+    }
 }
 
 function openCartModal() {
-    closeModal('productDetailModal');
-    openModal('cartModal');
+    // Chuyển hướng sang trang HTML riêng biệt (cart.html) không dùng popup
+    window.location.href = 'cart.html';
 }
 
 function openCheckoutModal() {
-    closeModal('cartModal');
-    closeModal('productDetailModal');
-    openModal('checkoutModal');
+    // Chuyển hướng sang trang HTML riêng biệt (checkout.html) không dùng popup
+    window.location.href = 'checkout.html';
 }
 
 function toggleAddressMock(isDefault) {
@@ -1895,10 +1887,15 @@ function toggleAddressMock(isDefault) {
     }
 }
 
-// Modal generic helpers
+// Modal generic helpers with dynamic z-index stacking
+let appModalZIndex = 2500;
 function openModal(id) {
     const el = document.getElementById(id);
-    if (el) el.classList.add('active');
+    if (el) {
+        appModalZIndex += 20;
+        el.style.zIndex = appModalZIndex;
+        el.classList.add('active');
+    }
 }
 
 function closeModal(id) {
@@ -2000,6 +1997,7 @@ function initHeroSlideshow() {
 
 // Tự động khởi tạo render khi tải trang
 document.addEventListener('DOMContentLoaded', () => {
+    checkUserAuthState();
     renderProducts();
     renderOrderHistory();
     initHeroSlideshow();
