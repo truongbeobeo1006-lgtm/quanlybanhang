@@ -129,8 +129,8 @@ let ADMIN_ORDERS = [
         status: 'Đã giao thành công',
         totalAmount: 619000,
         items: [
-            { name: 'Bình Thể Thao Inox 304 Khóa Nắp Bật 1000ml', cat: 'Bình thể thao', price: 299000, qty: 1 },
-            { name: 'Ly Giữ Nhiệt Văn Phòng nắp xoay 500ml', cat: 'Ly văn phòng', price: 320000, qty: 1 }
+            { name: 'Bình Thể Thao Inox 304 Khóa Nắp Bật 1000ml', cat: 'Bình thể thao', price: 299000, qty: 1, image: 'img/binh-the-thao-1.jpg' },
+            { name: 'Ly Giữ Nhiệt Văn Phòng nắp xoay 500ml', cat: 'Ly văn phòng', price: 320000, qty: 1, image: 'img/ly-van-phong-1.png' }
         ]
     },
     {
@@ -146,7 +146,7 @@ let ADMIN_ORDERS = [
         status: 'Đã giao thành công',
         totalAmount: 850000,
         items: [
-            { name: 'Combo Bình Giữ Nhiệt & Hộp Quà Tặng Doanh Nghiệp', cat: 'Hộp quà tặng', price: 425000, qty: 2 }
+            { name: 'Combo Bình Giữ Nhiệt & Hộp Quà Tặng Doanh Nghiệp', cat: 'Hộp quà tặng', price: 425000, qty: 2, image: 'img/hop-qua-1.png' }
         ]
     },
     {
@@ -162,7 +162,7 @@ let ADMIN_ORDERS = [
         status: 'Đã xác nhận',
         totalAmount: 420000,
         items: [
-            { name: 'Bình Giữ Nhiệt Họa Tiết Hoa Hồng Khắc Nổi 600ml', cat: 'Bình nước họa tiết', price: 420000, qty: 1 }
+            { name: 'Bình Giữ Nhiệt Họa Tiết Hoa Hồng Khắc Nổi 600ml', cat: 'Bình nước họa tiết', price: 420000, qty: 1, image: 'img/hoa-tiet-1.png' }
         ]
     },
     {
@@ -178,8 +178,8 @@ let ADMIN_ORDERS = [
         status: 'Đã xác nhận',
         totalAmount: 1250000,
         items: [
-            { name: 'Ly Giữ Nhiệt Chân Không Inox 316 Cao Cấp 750ml', cat: 'Ly giữ nhiệt', price: 380000, qty: 2 },
-            { name: 'Hộp Quà Cao Cấp Bình Giữ Nhiệt Khắc Tên', cat: 'Hộp quà tặng', price: 490000, qty: 1 }
+            { name: 'Ly Giữ Nhiệt Chân Không Inox 316 Cao Cấp 750ml', cat: 'Ly giữ nhiệt', price: 380000, qty: 2, image: 'img/ly-giu-nhiet-1.png' },
+            { name: 'Hộp Quà Cao Cấp Bình Giữ Nhiệt Khắc Tên', cat: 'Hộp quà tặng', price: 490000, qty: 1, image: 'img/hop-qua-3.png' }
         ]
     },
     {
@@ -195,7 +195,7 @@ let ADMIN_ORDERS = [
         status: 'Chưa xác nhận',
         totalAmount: 380000,
         items: [
-            { name: 'Ly Giữ Nhiệt Coffee Cup Nắp Chống Tràn 510ml', cat: 'Ly văn phòng', price: 190000, qty: 2 }
+            { name: 'Ly Giữ Nhiệt Coffee Cup Nắp Chống Tràn 510ml', cat: 'Ly văn phòng', price: 190000, qty: 2, image: 'img/ly-van-phong-5.png' }
         ]
     }
 ];
@@ -424,41 +424,41 @@ function handleDeleteProduct(id) {
 }
 
 function openAddProductModal() {
-    document.getElementById('pModalTitle').textContent = 'Thêm Sản Phẩm Mới';
+    document.getElementById('pModalTitle').textContent = 'Thêm Sản Phẩm Mới (Có Preview Ảnh)';
     document.getElementById('editingProductId').value = '';
-    document.getElementById('pInputName').value = FLAGSHIP_PRODUCT.name;
-    document.getElementById('pSelectCat').value = FLAGSHIP_PRODUCT.category;
-    document.getElementById('pSelectCapacity').value = FLAGSHIP_PRODUCT.capacity;
-    document.getElementById('pInputPrice').value = FLAGSHIP_PRODUCT.price;
+    document.getElementById('pInputName').value = '';
+    document.getElementById('pSelectCat').value = 'ly-giu-nhiet';
+    document.getElementById('pSelectCapacity').value = '500ml';
+    document.getElementById('pInputPrice').value = '189000';
     document.getElementById('pInputSold').value = '0';
     
-    // Hiển thị xem trước ảnh sản phẩm chủ lực
     const previewImg = document.getElementById('previewImgTag');
     const fallback = document.getElementById('previewIconFallback');
     if (previewImg && fallback) {
-        previewImg.src = FLAGSHIP_PRODUCT.image;
-        previewImg.style.display = 'block';
-        fallback.style.display = 'none';
+        previewImg.src = '';
+        previewImg.style.display = 'none';
+        fallback.style.display = 'flex';
     }
     openAdminModal('productFormModal');
 }
 
 function openEditProductModal(id) {
-    // Bấm vô sửa bất kỳ sản phẩm nào đều hiển thị về chung 1 sản phẩm theo yêu cầu
-    const displayId = id || FLAGSHIP_PRODUCT.id;
-    document.getElementById('pModalTitle').textContent = `Sửa Sản Phẩm: [${displayId}] ${FLAGSHIP_PRODUCT.name}`;
-    document.getElementById('editingProductId').value = displayId;
-    document.getElementById('pInputName').value = FLAGSHIP_PRODUCT.name;
-    document.getElementById('pSelectCat').value = FLAGSHIP_PRODUCT.category;
-    document.getElementById('pSelectCapacity').value = FLAGSHIP_PRODUCT.capacity;
-    document.getElementById('pInputPrice').value = FLAGSHIP_PRODUCT.price;
-    document.getElementById('pInputSold').value = FLAGSHIP_PRODUCT.sold;
+    const prod = ADMIN_PRODUCTS.find(p => p.id === id) || ADMIN_PRODUCTS[0];
+    if (!prod) return;
 
-    // Xem trước hình ảnh sản phẩm
+    document.getElementById('pModalTitle').textContent = `Sửa Sản Phẩm: [${prod.id}] ${prod.name}`;
+    document.getElementById('editingProductId').value = prod.id;
+    document.getElementById('pInputName').value = prod.name;
+    document.getElementById('pSelectCat').value = prod.category;
+    document.getElementById('pSelectCapacity').value = prod.capacity || '500ml';
+    document.getElementById('pInputPrice').value = prod.price;
+    document.getElementById('pInputSold').value = prod.sold;
+
+    // Xem trước hình ảnh thật của đúng sản phẩm này
     const previewImg = document.getElementById('previewImgTag');
     const fallback = document.getElementById('previewIconFallback');
     if (previewImg && fallback) {
-        previewImg.src = FLAGSHIP_PRODUCT.image;
+        previewImg.src = prod.image;
         previewImg.style.display = 'block';
         fallback.style.display = 'none';
     }
@@ -1001,19 +1001,39 @@ function viewOrderDetailMock(orderId) {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>
-                                <img src="${FLAGSHIP_PRODUCT.image}" alt="${FLAGSHIP_PRODUCT.name}" style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid #e2e8f0; vertical-align: middle;">
-                            </td>
-                            <td>
-                                <strong style="color: #0f172a; font-size: 13px;">${FLAGSHIP_PRODUCT.name}</strong>
-                                <div style="font-size: 11px; color: #64748b;">Mã SP: ${FLAGSHIP_PRODUCT.id} | Inox 304 cao cấp</div>
-                            </td>
-                            <td><span style="background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">${FLAGSHIP_PRODUCT.catName}</span></td>
-                            <td>${formatCurrencyAdmin(order.totalAmount)}</td>
-                            <td style="text-align: center;"><strong>1</strong></td>
-                            <td style="font-weight: 700; color: #dc2626;">${formatCurrencyAdmin(order.totalAmount)}</td>
-                        </tr>
+                        ${(order.items && order.items.length > 0) ? order.items.map(it => {
+                            const itemImg = it.image || 'img/ly-giu-nhiet-1.png';
+                            const itemTotal = (it.price || order.totalAmount) * (it.qty || 1);
+                            return `
+                                <tr>
+                                    <td>
+                                        <img src="${itemImg}" alt="${it.name}" style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid #e2e8f0; vertical-align: middle;">
+                                    </td>
+                                    <td>
+                                        <strong style="color: #0f172a; font-size: 13px;">${it.name}</strong>
+                                        <div style="font-size: 11px; color: #64748b;">Chất liệu Inox giữ nhiệt an toàn sức khỏe</div>
+                                    </td>
+                                    <td><span style="background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">${it.cat || 'Bình & Ly'}</span></td>
+                                    <td>${formatCurrencyAdmin(it.price || order.totalAmount)}</td>
+                                    <td style="text-align: center;"><strong>${it.qty || 1}</strong></td>
+                                    <td style="font-weight: 700; color: #dc2626;">${formatCurrencyAdmin(itemTotal)}</td>
+                                </tr>
+                            `;
+                        }).join('') : `
+                            <tr>
+                                <td>
+                                    <img src="img/ly-giu-nhiet-1.png" alt="Sản phẩm" style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid #e2e8f0; vertical-align: middle;">
+                                </td>
+                                <td>
+                                    <strong style="color: #0f172a; font-size: 13px;">Ly Giữ Nhiệt Inox 304 Mr.Huy</strong>
+                                    <div style="font-size: 11px; color: #64748b;">Chất liệu Inox giữ nhiệt an toàn</div>
+                                </td>
+                                <td><span style="background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">Ly giữ nhiệt</span></td>
+                                <td>${formatCurrencyAdmin(order.totalAmount)}</td>
+                                <td style="text-align: center;"><strong>1</strong></td>
+                                <td style="font-weight: 700; color: #dc2626;">${formatCurrencyAdmin(order.totalAmount)}</td>
+                            </tr>
+                        `}
                     </tbody>
                 </table>
             </div>

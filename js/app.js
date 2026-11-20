@@ -1515,11 +1515,11 @@ function renderProducts() {
             const tagSpans = (p.tags || []).map((t, idx) => `<span class="tag-mini ${idx % 2 === 0 ? 'blue' : 'orange'}">${t}</span>`).join('');
 
             return `
-                <div class="product-card" onclick="openProductDetailModal()">
+                <div class="product-card" onclick="openProductDetailModal('${p.id}')">
                     ${badgeFav}
                     ${discountTag}
                     <div class="prod-img-box">
-                        <img src="${p.image}" alt="${escapeHtml(p.name)}" loading="lazy" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=400&q=80';">
+                        <img src="${p.image}" alt="${escapeHtml(p.name)}" loading="lazy" onerror="this.onerror=null; this.src='img/ly-giu-nhiet-1.png';">
                     </div>
                     <div>
                         <h3 class="prod-title">${escapeHtml(p.name)}</h3>
@@ -1821,22 +1821,19 @@ function openOrderHistoryModal() {
 
 
 // ========================================================
-// 6. MODAL CHI TIẾT SẢN PHẨM: BẤM VÀO BẤT KỲ SẢN PHẨM NÀO
-//    ĐỀU CHỈ HƯỚNG VỀ 1 SẢN PHẨM DUY NHẤT THEO YÊU CẦU
+// ========================================================
+// 6. MODAL CHI TIẾT SẢN PHẨM: HIỂN THỊ ĐẦY ĐỦ ẢNH THẬT &
+//    THÔNG TIN CỦA TỪNG SẢN PHẨM KHÁCH HÀNG CHỌN
 // ========================================================
 
-function openProductDetailModal() {
-    // Luôn luôn thiết lập thông tin hiển thị là sản phẩm chủ lực duy nhất
-    const flagshipProduct = {
-        id: 'SP-MRHUY-01',
-        name: 'Ly Giữ Nhiệt Cao Cấp Inox 304 Iced Americano Kèm Ống Hút Mr.Huy (600ml)',
-        price: '189.000₫',
-        oldPrice: '250.000₫',
-        sold: '3.4k',
-        rating: '4.9 (1.2k+ đánh giá)',
-        image: 'img/ly-giu-nhiet-1.png',
-        desc: 'Chất liệu ruột Inox 304 cao cấp đạt chuẩn an toàn vệ sinh thực phẩm quốc tế. Công nghệ cách nhiệt chân không kép giữ nóng 8 tiếng, giữ lạnh đá viên liên tục 18 tiếng không đọng sương bên ngoài. Nắp đậy có khóa chốt chống rỉ nước 100%, tích hợp lỗ uống trực tiếp và cắm ống hút tiện lợi.'
-    };
+function openProductDetailModal(id) {
+    let prod = null;
+    if (id) {
+        prod = PRODUCTS_DATA.find(p => p.id === id);
+    }
+    if (!prod) {
+        prod = PRODUCTS_DATA[0];
+    }
 
     const titleEl = document.getElementById('dModalTitle');
     const nameEl = document.getElementById('dProdName');
@@ -1848,15 +1845,18 @@ function openProductDetailModal() {
     const soldEl = document.getElementById('dProdSold');
     const ratingEl = document.getElementById('dProdRating');
 
-    if (titleEl) titleEl.textContent = `Chi Tiết: ${flagshipProduct.name}`;
-    if (nameEl) nameEl.textContent = flagshipProduct.name;
-    if (idEl) idEl.textContent = flagshipProduct.id;
-    if (priceEl) priceEl.textContent = flagshipProduct.price;
-    if (oldPriceEl) oldPriceEl.textContent = flagshipProduct.oldPrice;
-    if (descEl) descEl.textContent = flagshipProduct.desc;
-    if (imgEl) imgEl.src = flagshipProduct.image;
-    if (soldEl) soldEl.textContent = flagshipProduct.sold;
-    if (ratingEl) ratingEl.innerHTML = `<i class="fa-solid fa-star"></i> ${flagshipProduct.rating}`;
+    if (titleEl) titleEl.textContent = `Chi Tiết: ${prod.name}`;
+    if (nameEl) nameEl.textContent = prod.name;
+    if (idEl) idEl.textContent = prod.id;
+    if (priceEl) priceEl.textContent = formatCurrency(prod.price);
+    if (oldPriceEl) oldPriceEl.textContent = prod.oldPrice ? formatCurrency(prod.oldPrice) : '';
+    if (descEl) descEl.textContent = prod.description || 'Chất liệu ruột Inox 304/316 cao cấp đạt chuẩn an toàn vệ sinh thực phẩm quốc tế. Công nghệ cách nhiệt chân không kép giữ nóng 8 tiếng, giữ lạnh đá viên liên tục 18 tiếng không đọng sương bên ngoài.';
+    if (imgEl) {
+        imgEl.src = prod.image;
+        imgEl.alt = prod.name;
+    }
+    if (soldEl) soldEl.textContent = formatSold(prod.sold);
+    if (ratingEl) ratingEl.innerHTML = `<i class="fa-solid fa-star"></i> ${prod.rating || 5.0} (${formatSold(prod.sold)} lượt bán)`;
 
     const qtyInput = document.getElementById('detailQtyInput');
     if (qtyInput) qtyInput.value = 1;
@@ -1950,7 +1950,7 @@ function updateHeroProductSlide(idx) {
     if (priceEl) priceEl.textContent = formatCurrency(prod.price);
     if (indexEl) indexEl.textContent = `${heroSlideshowIndex + 1}/${PRODUCTS_DATA.length}`;
     if (cardEl) {
-        cardEl.onclick = () => openProductDetailModal();
+        cardEl.onclick = () => openProductDetailModal(prod.id);
     }
 
     // Reset and animate progress bar
