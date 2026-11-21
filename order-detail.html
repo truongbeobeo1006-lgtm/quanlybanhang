@@ -514,7 +514,7 @@
         <!-- Thanh thao tác phía dưới -->
         <div class="actions-bar" style="justify-content: flex-end;">
             <div style="display: flex; gap: 12px;">
-                <a href="tel:0988123456" class="btn-action-print">
+                <a href="tel:0988123456" id="btnHotlineSupport" class="btn-action-print">
                     <i class="fa-solid fa-headset"></i> Hỗ trợ: 0988.123.456
                 </a>
                 <a href="index.html" id="btnBottomBack" class="btn-action-primary">
@@ -622,6 +622,8 @@
                     breadRoot.href = 'admin.html';
                     breadRoot.textContent = 'Quản trị Admin';
                 }
+                const hotline = document.getElementById('btnHotlineSupport');
+                if (hotline) hotline.style.display = 'none';
             } else {
                 if (btnNav) {
                     btnNav.href = 'index.html';
